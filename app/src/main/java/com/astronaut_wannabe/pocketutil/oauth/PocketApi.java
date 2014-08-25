@@ -21,6 +21,7 @@ import android.net.Uri;
  */
 public class PocketApi {
     private final static String sObtainRequestTokenUrl = "https://getpocket.com/v3/oauth/request";
+    private final static String sRetrieveContentUrl = "https://getpocket.com/v3/get";
     private final static String sRedirectToPocketForAuthorizeUrl =
             "https://getpocket.com/auth/authorize";
 
