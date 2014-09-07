@@ -1,10 +1,13 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
+import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.pocket.PocketResponse;
 import com.google.gson.Gson;
@@ -22,38 +25,41 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Created by ***REMOVED*** on 8/24/14.
  */
-public class FetchDataTask extends AsyncTask<Context, Void, PocketResponse> {
+public class FetchDataTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String TAG = SignInTask.class.getSimpleName().toString();
+    public static final String LOG_TAG = SignInTask.class.getSimpleName().toString();
 
     final private String mConsumerKey = "31435-0abb54732de387258fdc3ca5";
     final private String mRequestTokenUrl = "https://getpocket.com/v3/oauth/request";
     final private String mAuthorizeUrl = "https://getpocket.com/auth/authorize";
     final private String mRedirectUrl = "pocketapp31435:authdone";
-    final private TextView tv;
+    final private Context mContext;
 
-    public FetchDataTask(TextView textView) {
-        tv = textView;
+    public FetchDataTask(Context context) {
+        mContext = context;
     }
 
     @Override
-    protected PocketResponse doInBackground(Context... params) {
+    protected Void doInBackground(Void... params) {
         final String url = "https://getpocket.com/v3/get";
 
-            InputStream source = retrieveStream(url);
+        InputStream source = retrieveStream(url);
 
         Gson gson = new Gson();
 
             Reader reader = new InputStreamReader(source);
 
-            return gson.fromJson(reader, PocketResponse.class);
-
+        final PocketResponse pocketResponse = gson.fromJson(reader, PocketResponse.class);
+        addPocketItemsToDb(pocketResponse);
+        return null;
     }
 
     private InputStream retrieveStream(String url) {
@@ -92,12 +98,52 @@ public class FetchDataTask extends AsyncTask<Context, Void, PocketResponse> {
 
     }
 
-    @Override
-    protected void onPostExecute(PocketResponse pocketResponse) {
-        StringBuilder builder = new StringBuilder();
-        for (PocketItem item : pocketResponse.list.values()){
-            builder.append(item.given_title).append(":\n").append(item.excerpt).append("\n\n");
+    private void addPocketItemsToDb(PocketResponse response){
+        Collection<PocketItem> items = response.list.values();
+        PocketItem[] arr = new PocketItem[items.size()];
+        items.toArray(arr);
+        ContentValues[] values =
+                convertResponseToContentValues(arr);
+        final int count = mContext.getContentResolver()
+                .bulkInsert(PocketItemEntry.CONTENT_URI, values);
+        Log.d(LOG_TAG, "Added " + count + " rows to the DB");
+
+    }
+
+    private ContentValues [] convertResponseToContentValues(PocketItem[] items){
+        final int size = items.length;
+        if (0 == size){
+            return new ContentValues[0];
         }
-        tv.setText(builder);
+
+        final ContentValues [] ret = new ContentValues[size];
+
+        for(int i = 0; i < size; ++i){
+            final PocketItem item = items[i];
+            final ContentValues value = new ContentValues();
+            value.put(PocketItemEntry.COLUMN_POCKET_ITEM_ID, item.item_id);
+            value.put(PocketItemEntry.COLUMN_DATETEXT, "1000000");
+            value.put(PocketItemEntry.COLUMN_TITLE, item.resolved_title);
+            value.put(PocketItemEntry.COLUMN_RESOLVED_URL, item.resolved_url);
+            value.put(PocketItemEntry.COLUMN_EXCERPT, item.excerpt);
+            ret[i] = value;
+        }
+        return ret;
+    }
+
+    private Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

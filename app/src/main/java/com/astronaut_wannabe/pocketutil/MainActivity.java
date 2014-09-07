@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
             final View button = rootView.findViewById(R.id.sign_in_button);
             button.setVisibility(View.GONE);
             final TextView tv = (TextView) rootView.findViewById(R.id.textview1);
-            new FetchDataTask(tv).execute(getActivity());
+            new FetchDataTask(getActivity()).execute();
             return rootView;
         }
     }

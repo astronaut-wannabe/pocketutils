@@ -12,7 +12,7 @@ public class PocketItem {
     public String given_title;
     public int favorite;
     public int status;
-    public String resolved_titled;
+    public String resolved_title;
     public String resolved_url;
     public String excerpt;
     public int is_article;

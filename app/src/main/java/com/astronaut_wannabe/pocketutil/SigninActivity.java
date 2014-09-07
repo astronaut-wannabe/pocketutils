@@ -2,7 +2,7 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,13 +19,15 @@ public class SigninActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        final FragmentManager fm = getFragmentManager();
         if (savedInstanceState == null && AccessKey.accessToken == null) {
-            getFragmentManager().beginTransaction()
+            fm.beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }else{
-            final Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            fm.beginTransaction()
+                    .add(R.id.container, new PocketListFragment())
+                    .commit();
         }
     }
 

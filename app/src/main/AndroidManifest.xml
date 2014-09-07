@@ -26,6 +26,11 @@
                 <data android:scheme="pocketapp31435" />
             </intent-filter>
         </activity>
+        
+        <provider
+            android:authorities="com.astronaut_wannabe.pocketutil"
+            android:name=".data.PocketProvider" />
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
