@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PocketUtil</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_refresh">refresh</string>
-    <string name="pocket_access_key">PocketAccessKey</string>
-    <string name="pocket_authorized">PocketAuthorized</string>
-    <string name="title_and_synopsis_format"><![CDATA[<h1><b>%1$s:</b></h1>%2$s]]></string>
+    <string name="app_name" translatable="false">PocketUtil</string>
+    <string name="title_and_synopsis_format" translatable="false"><![CDATA[<h1><b>%1$s:</b></h1>%2$s]]></string>
 
+
+    <!-- Action Settings -->
+    <string name="action_settings" translatable="true">Settings</string>
+    <string name="action_refresh" translatable="true">Refresh</string>
+    <string name="action_clear_data" translatable="true">Delete List</string>
+    <string name="action_list_count" translatable="true">Get List Count</string>
+
+    <!-- Shared Preferences -->
+    <string name="pocket_access_key" translatable="false">PocketAccessKey</string>
+    <string name="pocket_authorized" translatable="false">PocketAuthorized</string>
+    <string name="pocket_since_date" translatable="false">PocketSinceDate</string>
 </resources>

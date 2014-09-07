@@ -1,10 +1,12 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
@@ -72,6 +75,21 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
         if (id == R.id.action_refresh) {
             new FetchDataTask(getActivity()).execute();
             return true;
+        } else if (id == R.id.action_clear_data){
+            // delete everything
+            final Activity activity = getActivity();
+            final SharedPreferences.Editor editor = activity.getPreferences(activity.MODE_PRIVATE).edit();
+            editor.putString(activity.getString(R.string.pocket_since_date), null);
+            editor.commit();
+            activity.getContentResolver().delete(PocketItemEntry.CONTENT_URI, null, null);
+            return true;
+        }else if (id == R.id.action_list_count){
+            final Activity activity = getActivity();
+            final Cursor cursor = activity.getContentResolver()
+                    .query(PocketItemEntry.CONTENT_URI,null,null,null,null);
+            if (cursor.moveToFirst())
+                Toast.makeText(activity,"Items in list: " +cursor.getCount(),Toast.LENGTH_LONG).show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -81,6 +99,7 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                               Bundle savedInstanceState) {
         final ListView rootView = (ListView) inflater.inflate(R.layout.fragment_pocket_list,
                 container, false);
+
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 R.layout.list_item_pocket,
@@ -106,6 +125,7 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 final TextView tv = (TextView) view;
                 switch (columnIndex){
+
                     case COL_POCKET_ITEM_ID:
                     case COL_DATETEXT:
                     case COL_RESOLVE_URL:
@@ -136,7 +156,7 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                     intent.setData(uri);
 
                     final PackageManager packageManager = getActivity().getPackageManager();
-                    if (packageManager.queryIntentActivities(intent, 0).isEmpty()) {
+                    if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
                         startActivity(intent);
                     }
                 }

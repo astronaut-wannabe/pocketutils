@@ -153,7 +153,7 @@ public class PocketProvider extends ContentProvider {
                     for (ContentValues value : values){
                         final long _id = db.insert(PocketItemEntry.TABLE_NAME, null,value);
                         if (-1 != _id){
-                            ++returnCount;
+                            returnCount++;
                         }
                     }
                     db.setTransactionSuccessful();

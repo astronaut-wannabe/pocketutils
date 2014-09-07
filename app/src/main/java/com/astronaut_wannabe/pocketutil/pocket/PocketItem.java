@@ -10,6 +10,7 @@ public class PocketItem {
     public int resolved_id;
     public String given_url;
     public String given_title;
+    public int time_added;
     public int favorite;
     public int status;
     public String resolved_title;
