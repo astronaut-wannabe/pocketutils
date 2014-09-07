@@ -7,5 +7,6 @@
     <string name="action_refresh">refresh</string>
     <string name="pocket_access_key">PocketAccessKey</string>
     <string name="pocket_authorized">PocketAuthorized</string>
+    <string name="title_and_synopsis_format"><![CDATA[<h1><b>%1$s:</b></h1>%2$s]]></string>
 
 </resources>

@@ -5,9 +5,11 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
@@ -85,20 +88,40 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 new String[]{
                         PocketItemEntry.COLUMN_TITLE,
                         PocketItemEntry.COLUMN_DATETEXT,
-                        PocketItemEntry.COLUMN_EXCERPT,
                         PocketItemEntry.COLUMN_RESOLVED_URL,
                         PocketItemEntry.COLUMN_POCKET_ITEM_ID
 
                 },
                 new int[]{
-                        R.id.article_title,
+                        R.id.article_title_and_excerpt,
                         R.id.article_date,
-                        R.id.article_excerpt,
                         R.id.article_url,
                         R.id.article_id
                 },
                 0
         );
+
+        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                final TextView tv = (TextView) view;
+                switch (columnIndex){
+                    case COL_POCKET_ITEM_ID:
+                    case COL_DATETEXT:
+                    case COL_RESOLVE_URL:
+                        tv.setText(cursor.getString(columnIndex));
+                        return true;
+                    case COL_TITLE:
+                        final String title = cursor.getString(COL_TITLE);
+                        final String excerpt = cursor.getString(COL_EXCERPT);
+                        final String htmlString = getString(R.string.title_and_synopsis_format, title, excerpt);
+                        tv.setText(Html.fromHtml(htmlString));
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
 
         rootView.setAdapter(mAdapter);
         rootView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,13 +129,16 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final SimpleCursorAdapter adapter = (SimpleCursorAdapter) parent.getAdapter();
                 final Cursor cursor = adapter.getCursor();
-
-                if(null != cursor && cursor.moveToPosition(position)){
+                if(null != cursor && cursor.moveToPosition(position)) {
                     final String url = cursor.getString(COL_RESOLVE_URL);
                     final Intent intent = new Intent(Intent.ACTION_VIEW);
                     final Uri uri = Uri.parse(url);
                     intent.setData(uri);
-                    startActivity(intent);
+
+                    final PackageManager packageManager = getActivity().getPackageManager();
+                    if (packageManager.queryIntentActivities(intent, 0).isEmpty()) {
+                        startActivity(intent);
+                    }
                 }
             }
         });

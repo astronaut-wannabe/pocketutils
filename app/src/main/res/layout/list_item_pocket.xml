@@ -5,13 +5,11 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/article_title"
+        android:id="@+id/article_title_and_excerpt"
+        android:bufferType="spannable"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/article_excerpt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp"/>
     <TextView
         android:id="@+id/article_date"
         android:layout_width="match_parent"
@@ -24,5 +22,4 @@
         android:id="@+id/article_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 </LinearLayout>
