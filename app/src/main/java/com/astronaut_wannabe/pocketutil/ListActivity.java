@@ -2,39 +2,32 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astronaut_wannabe.pocketutil.service.SignInFragment;
+/**
+ * Created by ***REMOVED*** on 9/7/14.
+ */
+public class ListActivity extends Activity {
 
-
-public class SigninActivity extends Activity {
-
-    public static final String LOG_TAG = SigninActivity.class.getSimpleName();
+    public static final String LOG_TAG = ListActivity.class.getSimpleName();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "Starting the pocket list.");
+
         setContentView(R.layout.activity_signin);
-        final SharedPreferences prefs = getPreferences(this.MODE_PRIVATE);
-        final boolean pocketAuthorized = prefs.getBoolean(getString(R.string.pocket_authorized), false);
         final FragmentManager fm = getFragmentManager();
-
-        Log.d(LOG_TAG, "pocket authorized = " + pocketAuthorized);
-
-        if (savedInstanceState == null && !pocketAuthorized) {
-            fm.beginTransaction()
-                    .add(R.id.container, new SignInFragment())
-                    .commit();
-        }else{
+        final Intent intent = getIntent();
+        if (savedInstanceState == null) {
             fm.beginTransaction()
                     .add(R.id.container, new PocketListFragment())
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

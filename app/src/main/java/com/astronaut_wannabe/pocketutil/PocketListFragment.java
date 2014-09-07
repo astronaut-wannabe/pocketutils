@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,8 @@ import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
  * Created by ***REMOVED*** on 9/6/14.
  */
 public class PocketListFragment extends Fragment implements LoaderManager.LoaderCallbacks <Cursor> {
+
+    public static final String LOG_TAG = PocketListFragment.class.getSimpleName();
 
     private final static int POCKET_LOADER = 0;
 
@@ -89,6 +92,8 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                     .query(PocketItemEntry.CONTENT_URI,null,null,null,null);
             if (cursor.moveToFirst())
                 Toast.makeText(activity,"Items in list: " +cursor.getCount(),Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(activity,"Items in list: " + 0,Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -151,13 +156,15 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 final Cursor cursor = adapter.getCursor();
                 if(null != cursor && cursor.moveToPosition(position)) {
                     final String url = cursor.getString(COL_RESOLVE_URL);
-                    final Intent intent = new Intent(Intent.ACTION_VIEW);
-                    final Uri uri = Uri.parse(url);
-                    intent.setData(uri);
-
-                    final PackageManager packageManager = getActivity().getPackageManager();
-                    if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
-                        startActivity(intent);
+                    if(url.contains(".pdf")){
+                        Log.d(LOG_TAG, "Opening as a pdf: " + url);
+                        openPdf(url);
+                    } else if(url.contains(".mp3")){
+                        Log.d(LOG_TAG, "Opening as a mp3: " + url);
+                        openMp3(url);
+                    } else {
+                        Log.d(LOG_TAG, "Opening as a webpage: " + url);
+                        openWebPage(url);
                     }
                 }
             }
@@ -180,6 +187,39 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 null,
                 sortOrder
         );
+    }
+
+    private void openPdf(String url) {
+        final String googleDocsUrl = "http://docs.google.com/viewer?url=";
+        final   Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(googleDocsUrl + url), "text/html");
+
+        final PackageManager packageManager = getActivity().getPackageManager();
+        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
+            startActivity(intent);
+        }
+    }
+
+    private void openMp3(String url) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        final Uri uri = Uri.parse(url);
+        intent.setData(uri);
+
+        final PackageManager packageManager = getActivity().getPackageManager();
+        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
+            startActivity(intent);
+        }
+    }
+
+    private void openWebPage(String url) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        final Uri uri = Uri.parse(url);
+        intent.setData(uri);
+
+        final PackageManager packageManager = getActivity().getPackageManager();
+        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
+            startActivity(intent);
+        }
     }
 
     @Override

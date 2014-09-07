@@ -7,9 +7,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
-            android:name=".SigninActivity"
-            android:label="@string/app_name" >
+            android:name=".HomeScreenActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,6 +21,12 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="pocketapp31435" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ListActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".HomeScreenActivity">
         </activity>
 
         <provider

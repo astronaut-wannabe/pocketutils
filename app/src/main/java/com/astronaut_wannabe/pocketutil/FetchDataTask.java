@@ -2,6 +2,7 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,7 +67,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
 
     private InputStream retrieveStream(String url) {
 
-        final SharedPreferences prefs = mContext.getPreferences(mContext.MODE_PRIVATE);
+        final SharedPreferences prefs = mContext.getSharedPreferences("prefs", Context.MODE_PRIVATE);
         final String prefKey = mContext.getString(R.string.pocket_access_key);
         final String accessKey = prefs.getString(prefKey, null);
 
@@ -117,7 +118,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
 
     private void addPocketItemsToDb(PocketResponse response){
         // update the sinceDate value for future calls
-        final SharedPreferences.Editor editor = mContext.getPreferences(mContext.MODE_PRIVATE).edit();
+        final SharedPreferences.Editor editor = mContext.getSharedPreferences("prefs", Context.MODE_PRIVATE).edit();
         editor.putString(mContext.getString(R.string.pocket_since_date), Integer.toString(response.since));
         editor.commit();
         Log.d(LOG_TAG, "New Since date is: " + response.since);

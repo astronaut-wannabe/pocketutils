@@ -42,13 +42,15 @@ public class SignInTask extends AsyncTask<Context, Void, Void> {
     @Override
     protected Void doInBackground(Context... params) {
         final Activity activity = (Activity) params[0];
-        final SharedPreferences prefs = activity.getPreferences(activity.MODE_PRIVATE);
+        final SharedPreferences prefs = activity.getSharedPreferences("prefs", Context.MODE_PRIVATE);
         final String prefKey = activity.getString(R.string.pocket_access_key);
         final String accessKey = prefs.getString(prefKey, null);
 
         if(accessKey == null){
+            Log.d(LOG_TAG, "No Access key, obtaining initial token.");
             getAccessKey(prefs, activity);
         }else{
+            Log.d(LOG_TAG, String.format("token=%s - Updating token to access key.",accessKey));
             authorizeAccessKey(prefs, activity);
         }
         return null;
@@ -176,7 +178,7 @@ public class SignInTask extends AsyncTask<Context, Void, Void> {
             editor.commit();
 
             //restart the main activity
-            final Intent intent = new Intent(activity, SigninActivity.class);
+            final Intent intent = new Intent(activity, HomeScreenActivity.class);
             activity.startActivity(intent);
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
