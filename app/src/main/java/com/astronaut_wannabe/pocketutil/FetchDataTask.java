@@ -1,7 +1,8 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -35,15 +36,12 @@ import java.util.List;
  */
 public class FetchDataTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String LOG_TAG = SignInTask.class.getSimpleName().toString();
+    public static final String LOG_TAG = FetchDataTask.class.getSimpleName().toString();
 
     final private String mConsumerKey = "31435-0abb54732de387258fdc3ca5";
-    final private String mRequestTokenUrl = "https://getpocket.com/v3/oauth/request";
-    final private String mAuthorizeUrl = "https://getpocket.com/auth/authorize";
-    final private String mRedirectUrl = "pocketapp31435:authdone";
-    final private Context mContext;
+    final private Activity mContext;
 
-    public FetchDataTask(Context context) {
+    public FetchDataTask(Activity context) {
         mContext = context;
     }
 
@@ -53,16 +51,28 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
 
         InputStream source = retrieveStream(url);
 
-        Gson gson = new Gson();
+        if ( source != null) {
+            Gson gson = new Gson();
 
             Reader reader = new InputStreamReader(source);
 
-        final PocketResponse pocketResponse = gson.fromJson(reader, PocketResponse.class);
-        addPocketItemsToDb(pocketResponse);
+            final PocketResponse pocketResponse = gson.fromJson(reader, PocketResponse.class);
+            addPocketItemsToDb(pocketResponse);
+        }
         return null;
     }
 
     private InputStream retrieveStream(String url) {
+
+        final SharedPreferences prefs = mContext.getPreferences(mContext.MODE_PRIVATE);
+        final String prefKey = mContext.getString(R.string.pocket_access_key);
+        final String accessKey = prefs.getString(prefKey, null);
+
+        Log.d(LOG_TAG, "access_key is: " + accessKey);
+
+        if(accessKey == null){
+            return null;
+        }
 
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(url);
@@ -70,7 +80,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
         // Add your data
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("consumer_key", mConsumerKey));
-        nameValuePairs.add(new BasicNameValuePair("access_token", AccessKey.accessToken));
+        nameValuePairs.add(new BasicNameValuePair("access_token", accessKey));
         nameValuePairs.add(new BasicNameValuePair("count", "10"));
         nameValuePairs.add(new BasicNameValuePair("detailType", "complete"));
 

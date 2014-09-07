@@ -1,28 +1,32 @@
 package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
+import com.astronaut_wannabe.pocketutil.service.SignInFragment;
 
 
 public class SigninActivity extends Activity {
 
-    @Override
+    public static final String LOG_TAG = SigninActivity.class.getSimpleName();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        final SharedPreferences prefs = getPreferences(this.MODE_PRIVATE);
+        final boolean pocketAuthorized = prefs.getBoolean(getString(R.string.pocket_authorized), false);
         final FragmentManager fm = getFragmentManager();
-        if (savedInstanceState == null && AccessKey.accessToken == null) {
+
+        Log.d(LOG_TAG, "pocket authorized = " + pocketAuthorized);
+
+        if (savedInstanceState == null && !pocketAuthorized) {
             fm.beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new SignInFragment())
                     .commit();
         }else{
             fm.beginTransaction()
@@ -49,36 +53,5 @@ public class SigninActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        public void signin(View view) {
-            Log.d("MAAIN", "clicked button");
-            final SignInTask task = new SignInTask();
-            task.execute(getActivity());
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
-            final View button = rootView.findViewById(R.id.sign_in_button);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    signin(v);
-                }
-            });
-            return rootView;
-        }
     }
 }

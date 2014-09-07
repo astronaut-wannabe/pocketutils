@@ -14,11 +14,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -26,7 +21,7 @@
                 <data android:scheme="pocketapp31435" />
             </intent-filter>
         </activity>
-        
+
         <provider
             android:authorities="com.astronaut_wannabe.pocketutil"
             android:name=".data.PocketProvider" />
