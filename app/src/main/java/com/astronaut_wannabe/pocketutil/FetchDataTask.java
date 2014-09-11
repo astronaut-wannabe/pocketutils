@@ -145,7 +145,8 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
         for(int i = 0; i < size; ++i){
             final PocketItem item = items[i];
             final ContentValues value = new ContentValues();
-            value.put(PocketItemEntry.COLUMN_POCKET_ITEM_ID, item.resolved_id);
+            value.put(PocketItemEntry.COLUMN_POCKET_ITEM_ID, item.item_id);
+            value.put(PocketItemEntry.COLUMN_POCKET_RESOLVED_ID, item.resolved_id);
             value.put(PocketItemEntry.COLUMN_DATETEXT, item.time_added);
             value.put(PocketItemEntry.COLUMN_TITLE, item.resolved_title);
             value.put(PocketItemEntry.COLUMN_RESOLVED_URL, item.resolved_url);

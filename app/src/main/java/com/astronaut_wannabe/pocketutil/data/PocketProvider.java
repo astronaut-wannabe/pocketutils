@@ -151,9 +151,18 @@ public class PocketProvider extends ContentProvider {
                 int returnCount = 0;
                 try{
                     for (ContentValues value : values){
-                        final long _id = db.insert(PocketItemEntry.TABLE_NAME, null,value);
-                        if (-1 != _id){
-                            returnCount++;
+                        if (value.get("item_id") != null && value.getAsInteger("resolved_item_id") == 0) {
+                            final long delete_id = db.delete(
+                                    PocketItemEntry.TABLE_NAME,
+                                    PocketItemEntry.COLUMN_POCKET_ITEM_ID + " = ?",
+                                    new String[] {value.getAsString("item_id")}
+                            );
+                            returnCount--;
+                        } else {
+                            final long _id = db.insert(PocketItemEntry.TABLE_NAME, null, value);
+                            if (-1 != _id) {
+                                returnCount++;
+                            }
                         }
                     }
                     db.setTransactionSuccessful();

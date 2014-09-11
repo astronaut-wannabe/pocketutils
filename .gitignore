@@ -12,3 +12,4 @@ gradle.properties
 gradle/
 gradlew.bat
 gradlew
+tmp/

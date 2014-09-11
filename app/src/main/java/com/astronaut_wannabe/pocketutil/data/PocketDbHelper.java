@@ -25,22 +25,18 @@ public class PocketDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_POCKET_TABLE = "CREATE TABLE " + PocketItemEntry.TABLE_NAME + " (" +
-                // Why AutoIncrement here, and not above?
-                // Unique keys will be auto-generated in either case.  But for weather
-                // forecasting, it's reasonable to assume the user will want information
-                // for a certain date and all dates *following*, so the forecast data
-                // should be sorted accordingly.
                 PocketItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
-                // the ID of the location entry associated with this weather data
+                // the ID of the pocket item entry
                 PocketItemEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                PocketItemEntry.COLUMN_POCKET_RESOLVED_ID + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_DATETEXT + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_EXCERPT + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_RESOLVED_URL + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_POCKET_ITEM_ID + " TEXT NOT NULL, " +
 
-                // To assure the application have just one weather entry per day
-                // per location, it's created a UNIQUE constraint with REPLACE strategy
+                // To assure the application have just one of each unique item, it's created a
+                // UNIQUE constraint with REPLACE strategy
                 " UNIQUE (" + PocketItemEntry.COLUMN_POCKET_ITEM_ID  + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_POCKET_TABLE);

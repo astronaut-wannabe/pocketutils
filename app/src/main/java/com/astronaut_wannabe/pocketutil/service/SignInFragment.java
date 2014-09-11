@@ -23,8 +23,7 @@ public class SignInFragment  extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
-        final View button = rootView.findViewById(R.id.sign_in_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signin(v);

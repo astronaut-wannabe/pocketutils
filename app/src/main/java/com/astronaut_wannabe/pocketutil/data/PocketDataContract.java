@@ -54,6 +54,8 @@ public class PocketDataContract {
         public static final String COLUMN_DATETEXT = "date";
         // the item id returned from the Pocket API
         public static final String COLUMN_POCKET_ITEM_ID = "item_id";
+        // the resolved id returned from the PocketAPI
+        public static final String COLUMN_POCKET_RESOLVED_ID = "resolved_item_id";
         // Short excerpt from the article
         public static final String COLUMN_EXCERPT = "excerpt";
         // the resolved url of article
