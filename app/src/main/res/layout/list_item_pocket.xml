@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff2f0ff">
 
     <TextView
         android:id="@+id/article_title_and_excerpt"
@@ -14,12 +16,28 @@
         android:id="@+id/article_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/article_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/article_id"
-        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="Delete Article"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Move to top of list"/>
+    </LinearLayout>
 </LinearLayout>

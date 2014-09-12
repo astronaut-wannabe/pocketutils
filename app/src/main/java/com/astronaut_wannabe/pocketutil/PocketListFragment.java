@@ -20,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.AdapterViewFlipper;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,19 +39,17 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
     private final static String[] POCKET_COLUMNS = {
             PocketItemEntry.TABLE_NAME + "." + PocketItemEntry._ID,
             PocketItemEntry.COLUMN_TITLE,
-            PocketItemEntry.COLUMN_DATETEXT,
             PocketItemEntry.COLUMN_EXCERPT,
-            PocketItemEntry.COLUMN_RESOLVED_URL,
-            PocketItemEntry.COLUMN_POCKET_ITEM_ID
+            PocketItemEntry.COLUMN_POCKET_ITEM_ID,
+            PocketItemEntry.COLUMN_RESOLVED_URL
     };
 
     // Indices tied to the COLUMNS, if the column order changes in the table, these must be updated
     public final static int COL_ID = 0;
     public final static int COL_TITLE = 1;
-    public final static int COL_DATETEXT = 2;
-    public final static int COL_EXCERPT  = 3;
-    public final static int COL_RESOLVE_URL = 4;
-    public final static int COL_POCKET_ITEM_ID = 5;
+    public final static int COL_EXCERPT  = 2;
+    public final static int COL_POCKET_ITEM_ID = 3;
+    public final static int COL_POCKET_URL = 4;
 
     private SimpleCursorAdapter mAdapter;
 
@@ -102,8 +100,10 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
-        final ListView rootView = (ListView) inflater.inflate(R.layout.fragment_pocket_list,
-                container, false);
+        //final ListView rootView = (ListView) inflater.inflate(R.layout.fragment_pocket_list,
+          //      container, false);
+final AdapterViewFlipper rootView = (AdapterViewFlipper) inflater.inflate(R.layout.fragment_pocket_list,
+             container, false);
 
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
@@ -111,15 +111,11 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 null,
                 new String[]{
                         PocketItemEntry.COLUMN_TITLE,
-                        PocketItemEntry.COLUMN_DATETEXT,
-                        PocketItemEntry.COLUMN_RESOLVED_URL,
                         PocketItemEntry.COLUMN_POCKET_ITEM_ID
 
                 },
                 new int[]{
                         R.id.article_title_and_excerpt,
-                        R.id.article_date,
-                        R.id.article_url,
                         R.id.article_id
                 },
                 0
@@ -132,8 +128,6 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 switch (columnIndex){
 
                     case COL_POCKET_ITEM_ID:
-                    case COL_DATETEXT:
-                    case COL_RESOLVE_URL:
                         tv.setText(cursor.getString(columnIndex));
                         return true;
                     case COL_TITLE:
@@ -155,7 +149,7 @@ public class PocketListFragment extends Fragment implements LoaderManager.Loader
                 final SimpleCursorAdapter adapter = (SimpleCursorAdapter) parent.getAdapter();
                 final Cursor cursor = adapter.getCursor();
                 if(null != cursor && cursor.moveToPosition(position)) {
-                    final String url = cursor.getString(COL_RESOLVE_URL);
+                    final String url = cursor.getString(COL_POCKET_URL);
                     if(url.contains(".pdf")){
                         Log.d(LOG_TAG, "Opening as a pdf: " + url);
                         openPdf(url);
