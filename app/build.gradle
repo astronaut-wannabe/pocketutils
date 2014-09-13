@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.astronaut_wannabe.pocketutil"
-        minSdkVersion 19
+        minSdkVersion 12
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
@@ -21,6 +21,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.scribe:scribe:1.3.5'
+    compile "com.android.support:support-v4:19.0.+"
     compile 'com.google.code.gson:gson:2.3'
 }

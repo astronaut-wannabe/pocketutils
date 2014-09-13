@@ -20,12 +20,9 @@ public class PocketViewFlipper extends AdapterViewFlipper {
                 return true;
             case MotionEvent.ACTION_UP:
                 float finalX = ev.getX();
-                Toast.makeText(getContext(), "Action up: x="+finalX,Toast.LENGTH_SHORT).show();
                 if (initialX > finalX) {
-                    Toast.makeText(getContext(), "Left = Delete: x="+initialX,Toast.LENGTH_SHORT).show();
                     showNext();
                 } else {
-                    Toast.makeText(getContext(), "Right = Save: x="+initialX,Toast.LENGTH_SHORT).show();
                     showNext();
                 }
                 return true;

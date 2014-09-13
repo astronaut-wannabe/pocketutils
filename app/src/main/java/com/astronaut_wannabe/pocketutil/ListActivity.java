@@ -1,17 +1,18 @@
 package com.astronaut_wannabe.pocketutil;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
 /**
  * Created by ***REMOVED*** on 9/7/14.
  */
-public class ListActivity extends Activity {
+public class ListActivity extends FragmentActivity {
 
     public static final String LOG_TAG = ListActivity.class.getSimpleName();
 
@@ -20,7 +21,7 @@ public class ListActivity extends Activity {
         Log.d(LOG_TAG, "Starting the pocket list.");
 
         setContentView(R.layout.activity_signin);
-        final FragmentManager fm = getFragmentManager();
+        final FragmentManager fm = getSupportFragmentManager();
         final Intent intent = getIntent();
         if (savedInstanceState == null) {
             fm.beginTransaction()
