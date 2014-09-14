@@ -88,7 +88,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, Void> {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("consumer_key", mConsumerKey));
         nameValuePairs.add(new BasicNameValuePair("access_token", accessKey));
-        nameValuePairs.add(new BasicNameValuePair("count", "5000"));
+        nameValuePairs.add(new BasicNameValuePair("count", "10"));
         nameValuePairs.add(new BasicNameValuePair("detailType", "complete"));
         nameValuePairs.add(new BasicNameValuePair("since", since));
 

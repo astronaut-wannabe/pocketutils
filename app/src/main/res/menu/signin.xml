@@ -5,4 +5,7 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/action_clear_data"
+        android:title="@string/action_clear_data"
+        android:showAsAction="never" />
 </menu>

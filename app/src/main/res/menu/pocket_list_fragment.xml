@@ -6,7 +6,4 @@
     <item android:id="@+id/action_list_count"
         android:title="@string/action_list_count"
         android:showAsAction="never" />
-    <item android:id="@+id/action_clear_data"
-        android:title="@string/action_clear_data"
-        android:showAsAction="never" />
 </menu>
