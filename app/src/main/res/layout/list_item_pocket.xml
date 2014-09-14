@@ -6,20 +6,43 @@
     android:layout_height="match_parent"
     android:background="#fff2f0ff">
 
-    <ImageView
+    <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="500dp"
-        android:background="#ff8e57ff"/>
+        android:layout_marginBottom="@dimen/activity_horizontal_margin">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/home_screen_image"
+            android:background="@color/placeholder_image_color"/>
+        <TextView
+            android:id="@+id/article_title"
+            android:bufferType="spannable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:paddingEnd="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/default_gap"
+            android:textSize="30sp"
+            android:typeface="sans"
+            android:textColor="@android:color/white"
+            android:shadowRadius="2"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowColor="@android:color/black"
+            android:background="@color/image_overlay_background"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+    </FrameLayout>
 
     <TextView
-        android:id="@+id/article_title_and_excerpt"
-        android:text="This is an example Title\n\n wacacacaghfs shd jh ask;h dfljkq hkuxchjksdh j,.ash d;kahsldjka hkp adjklsgh uikd hkuj;z huiozudjk;azuiocu uio;hkjd HJH FSIY O;luioWE JFD;JIKC NKJ"
-        android:bufferType="spannable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"/>
-
-
+            android:id="@+id/article_excerpt"
+            android:bufferType="spannable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

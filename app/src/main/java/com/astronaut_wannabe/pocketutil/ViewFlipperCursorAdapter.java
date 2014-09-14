@@ -9,7 +9,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,11 +47,14 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        final TextView tv = (TextView) view.findViewById(R.id.article_title_and_excerpt);
+        final TextView titleTextView = (TextView) view.findViewById(R.id.article_title);
+        final TextView excerptTextView = (TextView) view.findViewById(R.id.article_excerpt);
+
         final String title = cursor.getString(COL_TITLE);
         final String excerpt = cursor.getString(COL_EXCERPT);
-        final String htmlString = mContext.getString(R.string.title_and_synopsis_format, title, excerpt);
-        tv.setText(Html.fromHtml(htmlString));
+        final String htmlString = mContext.getString(R.string.title_and_synopsis_format, title);
+        titleTextView.setText(Html.fromHtml(htmlString));
+        excerptTextView.setText(excerpt);
     }
 
     @Override

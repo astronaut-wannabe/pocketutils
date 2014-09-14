@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="placeholder_image_color">#ff8e57ff</color>
+    <color name="image_overlay_background">#64000000</color>
+</resources>
