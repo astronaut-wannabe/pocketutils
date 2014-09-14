@@ -81,8 +81,8 @@ public class SignInTask extends AsyncTask<Context, Void, Void> {
             for(Header h : headers)
                 Log.d(LOG_TAG, h.toString());
 
-            InputStream inputStream = response.getEntity().getContent();
-            StringBuffer buffer = new StringBuffer();
+            final InputStream inputStream = response.getEntity().getContent();
+            final StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
                 return;
@@ -106,7 +106,7 @@ public class SignInTask extends AsyncTask<Context, Void, Void> {
             editor.putString(prefKey, code.trim()
             );
             editor.commit();
-            Uri builtUri = Uri.parse(mAuthorizeUrl).buildUpon()
+            final Uri builtUri = Uri.parse(mAuthorizeUrl).buildUpon()
                     .appendQueryParameter("request_token", code)
                     .appendQueryParameter("mobile", "1")
                     .appendQueryParameter("redirect_uri", mRedirectUrl)

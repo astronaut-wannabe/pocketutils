@@ -2,6 +2,7 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.gesture.GestureOverlayView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -51,14 +52,17 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        final GestureOverlayView v = new GestureOverlayView(context);
         final View view = LayoutInflater.from(context).inflate(R.layout.list_item_pocket,parent,false);
-        final ViewHolder vh = new ViewHolder(view);
-        view.setTag(vh);
-        return view;
+        v.addView(view);
+        final ViewHolder vh = new ViewHolder(v);
+        v.setTag(vh);
+        return v;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        final GestureOverlayView overlayView = (GestureOverlayView) view;
         final ViewHolder vh = (ViewHolder) view.getTag();
         final String title = cursor.getString(COL_TITLE);
         final String excerpt = cursor.getString(COL_EXCERPT);
