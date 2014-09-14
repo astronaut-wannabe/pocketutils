@@ -6,6 +6,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
+
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
 /**
@@ -15,6 +17,7 @@ public class PocketProvider extends ContentProvider {
     private static final int POCKET_ITEMS = 100;
     private static final int POCKET_ITEM_WITH_ID = 101;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private static final String LOG_TAG = PocketProvider.class.getSimpleName();
 
     private PocketDbHelper mDbHelper;
 
@@ -105,10 +108,12 @@ public class PocketProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+        Log.d(LOG_TAG, "in delete()");
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int rowsDeleted;
         switch (sUriMatcher.match(uri)){
             case POCKET_ITEMS:
+                Log.d(LOG_TAG, "deleting all rows");
                 rowsDeleted = db.delete(PocketItemEntry.TABLE_NAME,selection,selectionArgs);
                 break;
             default:
@@ -117,6 +122,7 @@ public class PocketProvider extends ContentProvider {
 
         // because a null deletes everything
         if(null == selection || 0 != rowsDeleted){
+            Log.d(LOG_TAG, "notifying loaders of change.");
             getContext().getContentResolver().notifyChange(uri,null);
         }
         return rowsDeleted;

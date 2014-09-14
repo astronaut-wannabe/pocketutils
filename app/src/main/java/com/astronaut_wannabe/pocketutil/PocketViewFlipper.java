@@ -2,9 +2,9 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.AdapterViewFlipper;
-import android.widget.Toast;
 
 /**
  * Created by ***REMOVED*** on 9/11/14.
@@ -21,8 +21,10 @@ public class PocketViewFlipper extends AdapterViewFlipper {
             case MotionEvent.ACTION_UP:
                 float finalX = ev.getX();
                 if (initialX > finalX) {
+                    Log.d(VIEW_LOG_TAG,"left swipe");
                     showNext();
                 } else {
+                    Log.d(VIEW_LOG_TAG,"right swipe");
                     showNext();
                 }
                 return true;
@@ -31,21 +33,7 @@ public class PocketViewFlipper extends AdapterViewFlipper {
         }
     }
 
-    @Override
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        Toast.makeText(getContext(), "setOnItemClickListener",Toast.LENGTH_SHORT).show();
-        super.setOnItemClickListener(listener);
-    }
-
-    @Override
-    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
-        Toast.makeText(getContext(), "setOnItemSelectedListener",Toast.LENGTH_SHORT).show();
-        super.setOnItemSelectedListener(listener);
-    }
-
     public PocketViewFlipper(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
     }
 }

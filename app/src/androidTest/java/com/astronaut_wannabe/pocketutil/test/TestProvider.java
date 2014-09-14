@@ -23,17 +23,17 @@ public class TestProvider extends AndroidTestCase {
     public static final String TEST_TITLE = "13 potatoes that look like feet";
     public static final String TEST_URL = "www.buzzfeed.com";
     public static final String TEST_ID = "1234";
+    public static final String TEST_RESOLVED_ID = "5678";
     public static final String TEST_EXCERPT = "once upon a time there was a young prince. This prince had a thing for feet";
     public static final String TEST_DATE = "12-12-2091";
 
     public void testDeleteAllRecords(){
         mContext.getContentResolver().delete(PocketItemEntry.CONTENT_URI,null,null);
 
-        final Cursor cursor = mContext.getContentResolver().query(
-                PocketItemEntry.CONTENT_URI,null,null,null,null);
-
-        assertEquals(0, cursor.getCount());
-        cursor.close();
+        final int cursor = mContext.getContentResolver().delete(
+                PocketItemEntry.CONTENT_URI,
+                null,
+                null);
     }
 
     public void testGetType(){
@@ -136,6 +136,7 @@ public class TestProvider extends AndroidTestCase {
     private ContentValues getContentValues(){
         final ContentValues values = new ContentValues();
         values.put(PocketItemEntry.COLUMN_POCKET_ITEM_ID, TEST_ID);
+        values.put(PocketItemEntry.COLUMN_POCKET_RESOLVED_ID, TEST_RESOLVED_ID);
         values.put(PocketItemEntry.COLUMN_RESOLVED_URL, TEST_URL);
         values.put(PocketItemEntry.COLUMN_TITLE, TEST_TITLE);
         values.put(PocketItemEntry.COLUMN_EXCERPT, TEST_EXCERPT);

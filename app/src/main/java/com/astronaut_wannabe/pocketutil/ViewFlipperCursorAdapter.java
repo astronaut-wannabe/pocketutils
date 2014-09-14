@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,21 +43,16 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        if(cursor.getCount() == 0){
-            return new TextView(mContext);
-        }
         return LayoutInflater.from(context).inflate(R.layout.list_item_pocket,parent,false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final TextView tv = (TextView) view.findViewById(R.id.article_title_and_excerpt);
-        if(cursor.moveToFirst()) {
-            final String title = cursor.getString(COL_TITLE);
-            final String excerpt = cursor.getString(COL_EXCERPT);
-            final String htmlString = mContext.getString(R.string.title_and_synopsis_format, title, excerpt);
-            tv.setText(Html.fromHtml(htmlString));
-        }
+        final String title = cursor.getString(COL_TITLE);
+        final String excerpt = cursor.getString(COL_EXCERPT);
+        final String htmlString = mContext.getString(R.string.title_and_synopsis_format, title, excerpt);
+        tv.setText(Html.fromHtml(htmlString));
     }
 
     @Override
