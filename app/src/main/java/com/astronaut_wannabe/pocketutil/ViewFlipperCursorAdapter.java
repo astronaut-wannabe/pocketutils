@@ -2,7 +2,6 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.gesture.GestureOverlayView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -10,10 +9,14 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterViewFlipper;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,15 +49,16 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
             Toast.makeText(v.getContext(),"Button Clicked:"+v.getId(),Toast.LENGTH_SHORT).show();
         }
     };
+
     public ViewFlipperCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, ViewFlipperCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        final GestureOverlayView v = new GestureOverlayView(context);
         final View view = LayoutInflater.from(context).inflate(R.layout.list_item_pocket,parent,false);
-        v.addView(view);
+        final View v = new MyMotionEvent(mContext, parent);
+        ((ViewGroup)v).addView(view);
         final ViewHolder vh = new ViewHolder(v);
         v.setTag(vh);
         return v;
@@ -62,7 +66,6 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        final GestureOverlayView overlayView = (GestureOverlayView) view;
         final ViewHolder vh = (ViewHolder) view.getTag();
         final String title = cursor.getString(COL_TITLE);
         final String excerpt = cursor.getString(COL_EXCERPT);
@@ -111,6 +114,45 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
             id = (TextView) view.findViewById(R.id.article_id);
             delete_btn = (Button) view.findViewById(R.id.article_delete_btn);
             save_btn = (Button) view.findViewById(R.id.article_save_btn);
+        }
+    }
+
+    private static class MyMotionEvent extends LinearLayout {
+
+        private float mStartX;
+        private final AdapterViewFlipper mFlipper;
+        private final Context mContext;
+
+        public MyMotionEvent(Context context, View parent) {
+            super(context);
+            mFlipper = (AdapterViewFlipper) parent;
+            mContext = context;
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            final int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d(LOG_TAG, "ACTION_DOWN");
+                    mStartX = event.getX();
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    Log.d(LOG_TAG, "ACTION_DOWN");
+                    if (mStartX > event.getX()) {
+                        Log.d(LOG_TAG, "left");
+                        mFlipper.setOutAnimation(mContext, R.anim.slide_left);
+                        mFlipper.showNext();
+                        return true;
+                    } else {
+                        Log.d(LOG_TAG, "right");
+                        mFlipper.setOutAnimation(mContext, R.anim.slide_right);
+                        mFlipper.showNext();
+                        return true;
+                    }
+                default:
+                    return super.onTouchEvent(event);
+            }
         }
     }
 }

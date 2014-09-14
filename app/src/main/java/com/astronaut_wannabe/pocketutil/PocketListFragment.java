@@ -29,6 +29,7 @@ public class PocketListFragment extends Fragment {
 
     private ViewFlipperCursorAdapter mAdapter;
 
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -70,7 +71,7 @@ public class PocketListFragment extends Fragment {
                               Bundle savedInstanceState) {
         final AdapterViewFlipper rootView = (AdapterViewFlipper) inflater.inflate(
                 R.layout.fragment_pocket_list, container, false);
-
+        rootView.setInAnimation(getActivity(), R.anim.slide_in_from_top);
         mAdapter = new ViewFlipperCursorAdapter(
                 getActivity(),
                 null,0);
