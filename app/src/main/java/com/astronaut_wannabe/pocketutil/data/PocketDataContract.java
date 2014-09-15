@@ -10,8 +10,6 @@ import java.util.Date;
 /**
  * Defines the table and column names for the database that holds the data from a user's Pocket
  * account.
- *
- * Created by ***REMOVED*** on 9/6/14.
  */
 public class PocketDataContract {
     /** The name for the entire content provider */
@@ -59,9 +57,9 @@ public class PocketDataContract {
         // Short excerpt from the article
         public static final String COLUMN_EXCERPT = "excerpt";
         // the resolved url of article
-        public static String COLUMN_RESOLVED_URL = "resolved_url";
+        public static final String COLUMN_RESOLVED_URL = "resolved_url";
         // the title of the item
-        public static String COLUMN_TITLE = "title";
+        public static final String COLUMN_TITLE = "title";
 
         public static Uri buildPocketItemUriWithItemId(String itemId) {
             return CONTENT_URI.buildUpon().appendPath(itemId).build();

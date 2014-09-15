@@ -1,6 +1,5 @@
 package com.astronaut_wannabe.pocketutil;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,9 +13,6 @@ import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
 
-/**
- * Created by ***REMOVED*** on 9/7/14.
- */
 public class ListActivity extends FragmentActivity {
 
     public static final String LOG_TAG = ListActivity.class.getSimpleName();
@@ -28,7 +24,6 @@ public class ListActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_signin);
         final FragmentManager fm = getSupportFragmentManager();
-        final Intent intent = getIntent();
         if (savedInstanceState == null) {
             fm.beginTransaction()
                     .add(R.id.container, new PocketListFragment(), FRAGMENT_TAG)

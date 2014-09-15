@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/home_screen_image"
+            android:contentDescription="@string/content_desc_placeholder_image"
             android:background="@color/placeholder_image_color"/>
         <TextView
             android:layout_width="match_parent"
@@ -24,7 +25,6 @@
             android:paddingRight="0dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/default_gap"
-            android:text="Current List: 9999"
             android:textSize="50sp"
             android:textColor="@android:color/white"
             android:shadowRadius="2"

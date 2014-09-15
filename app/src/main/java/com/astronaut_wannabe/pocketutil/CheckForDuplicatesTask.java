@@ -12,12 +12,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Created by ***REMOVED*** on 9/10/14.
- */
 public class CheckForDuplicatesTask extends AsyncTask<Void, Void, List<String>> {
 
-    public static final String LOG_TAG = CheckForDuplicatesTask.class.getSimpleName().toString();
+    public static final String LOG_TAG = CheckForDuplicatesTask.class.getSimpleName();
 
     private final static String[] POCKET_COLUMNS = {
             PocketItemEntry.TABLE_NAME + "." + PocketItemEntry._ID,

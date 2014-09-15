@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -22,9 +23,6 @@ import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 
-/**
- * Created by ***REMOVED*** on 9/13/14.
- */
 public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderManager.LoaderCallbacks <Cursor>{
     private static final String LOG_TAG = ViewFlipperCursorAdapter.class.getSimpleName();
 
@@ -130,7 +128,7 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent event) {
+        public boolean onTouchEvent(@NonNull MotionEvent event) {
             final int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:

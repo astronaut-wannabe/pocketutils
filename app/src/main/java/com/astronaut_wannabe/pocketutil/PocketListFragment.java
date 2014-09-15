@@ -18,9 +18,6 @@ import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
-/**
- * Created by ***REMOVED*** on 9/6/14.
- */
 public class PocketListFragment extends Fragment {
 
     public static final String LOG_TAG = PocketListFragment.class.getSimpleName();

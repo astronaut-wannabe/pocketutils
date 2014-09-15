@@ -11,9 +11,6 @@ import android.widget.TextView;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 
-/**
- * Created by ***REMOVED*** on 9/6/14.
- */
 public class HomeScreenFragment extends Fragment implements View.OnClickListener {
 
     public static final String LOG_TAG = HomeScreenFragment.class.getSimpleName();

@@ -8,9 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewSwitcher;
 
-/**
- * Created by ***REMOVED*** on 9/6/14.
- */
 public class SignInFragment  extends Fragment {
 
     private static final String LOG_TAG = SignInFragment.class.getSimpleName();

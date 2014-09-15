@@ -5,11 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
-/**
- * Manages a local database for weather data.
- *
- * Created by ***REMOVED*** on 9/6/14.
- */
 public class PocketDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.

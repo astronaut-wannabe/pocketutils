@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
-/**
- * Created by ***REMOVED*** on 9/7/14.
- */
 public class HomeScreenClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {

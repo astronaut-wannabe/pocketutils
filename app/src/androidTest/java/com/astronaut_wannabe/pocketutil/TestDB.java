@@ -12,9 +12,6 @@ import com.astronaut_wannabe.pocketutil.data.PocketDbHelper;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by ***REMOVED*** on 9/6/14.
- */
 public class TestDB extends AndroidTestCase {
 
     public static final String LOG_TAG = TestDB.class.getSimpleName();

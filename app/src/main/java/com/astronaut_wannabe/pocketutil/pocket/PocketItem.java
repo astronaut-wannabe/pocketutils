@@ -2,9 +2,6 @@ package com.astronaut_wannabe.pocketutil.pocket;
 
 import java.util.HashMap;
 
-/**
- * Created by ***REMOVED*** on 8/24/14.
- */
 public class PocketItem {
     public int item_id;
     public int resolved_id;
