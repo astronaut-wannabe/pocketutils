@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
+import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
 
 /**
@@ -54,9 +55,17 @@ public class ListActivity extends FragmentActivity {
             // delete everything
             resetFragmentToEmpty();
             return true;
-        }
-        return super.onOptionsItemSelected(item);
+        } else if (id == R.id.action_refresh) {
+            fetchList();
+            return true;
+        }else
+            return super.onOptionsItemSelected(item);
     }
+
+    private void fetchList() {
+        PocketUtilSyncAdapter.syncImmediately(this);
+    }
+
     private void resetFragmentToEmpty(){
         // reset the since date so that we fetch the whole list on the next refresh
         final SharedPreferences.Editor editor = getSharedPreferences("prefs",MODE_PRIVATE).edit();

@@ -1,4 +1,4 @@
-package com.astronaut_wannabe.pocketutil.service;
+package com.astronaut_wannabe.pocketutil;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -7,9 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewSwitcher;
-
-import com.astronaut_wannabe.pocketutil.R;
-import com.astronaut_wannabe.pocketutil.SignInTask;
 
 /**
  * Created by ***REMOVED*** on 9/6/14.

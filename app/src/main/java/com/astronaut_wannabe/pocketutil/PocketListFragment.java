@@ -50,10 +50,7 @@ public class PocketListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            new FetchDataTask(getActivity()).execute();
-            return true;
-        }else if (id == R.id.action_list_count){
+         if (id == R.id.action_list_count){
             final Activity activity = getActivity();
             final Cursor cursor = activity.getContentResolver()
                     .query(PocketItemEntry.CONTENT_URI,null,null,null,null);
