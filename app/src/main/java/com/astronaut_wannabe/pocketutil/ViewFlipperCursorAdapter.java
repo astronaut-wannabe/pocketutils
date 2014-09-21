@@ -49,7 +49,7 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     };
 
     public ViewFlipperCursorAdapter(Context context, Cursor c, int flags) {
-        super(context, c, ViewFlipperCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
     }
 
     @Override
@@ -78,9 +78,11 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(LOG_TAG, "onCreateLoader was called");
+
         final Uri uri = PocketDataContract.PocketItemEntry.CONTENT_URI;
         //sort ascending alphabetically by the article title
-        final String sortOrder = PocketDataContract.PocketItemEntry.COLUMN_TITLE + " ASC";
+        final String sortOrder = PocketDataContract.PocketItemEntry.COLUMN_DATETEXT + " DESC";
 
         return new CursorLoader(
                 mContext,
@@ -94,7 +96,8 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            swapCursor(data);
+        Log.d(LOG_TAG, "onLoaderFinished was called:cursor size="+data.getCount());
+        swapCursor(data);
     }
 
     @Override
@@ -118,6 +121,7 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     private static class MyMotionEvent extends LinearLayout {
 
         private float mStartX;
+        private int mCurrentArticlePosition;
         private final AdapterViewFlipper mFlipper;
         private final Context mContext;
 
@@ -125,6 +129,7 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
             super(context);
             mFlipper = (AdapterViewFlipper) parent;
             mContext = context;
+            mCurrentArticlePosition = 0;
         }
 
         @Override
@@ -132,25 +137,42 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
             final int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.d(LOG_TAG, "ACTION_DOWN");
                     mStartX = event.getX();
                     return true;
                 case MotionEvent.ACTION_UP:
-                    Log.d(LOG_TAG, "ACTION_DOWN");
-                    if (mStartX > event.getX()) {
-                        Log.d(LOG_TAG, "left");
+                    final int nextArticle = getRandomArticlePosition();
+                    if (isSwipedLeft(event)) {
+                        deleteArticle();
                         mFlipper.setOutAnimation(mContext, R.anim.slide_left);
-                        mFlipper.showNext();
+                        mFlipper.setDisplayedChild(nextArticle);
                         return true;
                     } else {
-                        Log.d(LOG_TAG, "right");
                         mFlipper.setOutAnimation(mContext, R.anim.slide_right);
-                        mFlipper.showNext();
+                        mFlipper.setDisplayedChild(nextArticle);
                         return true;
                     }
                 default:
                     return super.onTouchEvent(event);
             }
+        }
+
+        private boolean isSwipedLeft(final MotionEvent event){
+            return mStartX > event.getX();
+        }
+
+        private int getRandomArticlePosition(){
+            final int size = mFlipper.getCount();
+            return (int) ((Math.random() * size) + 1);
+        }
+
+        private void deleteArticle(){
+            final TextView idView = (TextView) findViewById(R.id.article_id);
+            final String articleId = idView.getText().toString();
+            Log.d(LOG_TAG, "Deleting article " + articleId);
+            getContext().getContentResolver().delete(
+                    PocketDataContract.PocketItemEntry.CONTENT_URI,
+                    PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
+                    new String[]{articleId});
         }
     }
 }
