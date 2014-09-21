@@ -1,10 +1,7 @@
 package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -66,43 +63,8 @@ public class PocketListFragment extends Fragment {
         final AdapterViewFlipper rootView = (AdapterViewFlipper) inflater.inflate(
                 R.layout.fragment_pocket_list, container, false);
         rootView.setInAnimation(getActivity(), R.anim.slide_in_from_top);
-        mAdapter = new ViewFlipperCursorAdapter(
-                getActivity(),
-                null,0);
+        mAdapter = new ViewFlipperCursorAdapter(getActivity(), null, 0);
         rootView.setAdapter(mAdapter);
         return rootView;
-    }
-
-    private void openPdf(String url) {
-        final String googleDocsUrl = "http://docs.google.com/viewer?url=";
-        final   Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(googleDocsUrl + url), "text/html");
-
-        final PackageManager packageManager = getActivity().getPackageManager();
-        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
-            startActivity(intent);
-        }
-    }
-
-    private void openMp3(String url) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        final Uri uri = Uri.parse(url);
-        intent.setData(uri);
-
-        final PackageManager packageManager = getActivity().getPackageManager();
-        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
-            startActivity(intent);
-        }
-    }
-
-    private void openWebPage(String url) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        final Uri uri = Uri.parse(url);
-        intent.setData(uri);
-
-        final PackageManager packageManager = getActivity().getPackageManager();
-        if (!packageManager.queryIntentActivities(intent, 0).isEmpty()) {
-            startActivity(intent);
-        }
     }
 }
