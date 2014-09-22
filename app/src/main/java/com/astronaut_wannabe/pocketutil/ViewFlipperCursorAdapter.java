@@ -3,23 +3,17 @@ package com.astronaut_wannabe.pocketutil;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterViewFlipper;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 
@@ -41,12 +35,7 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     public final static int COL_POCKET_ITEM_ID = 3;
     public final static int COL_POCKET_URL = 4;
 
-    private final View.OnClickListener mButtonPlaceholderClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(v.getContext(),"Button Clicked:"+v.getId(),Toast.LENGTH_SHORT).show();
-        }
-    };
+    private PocketSwipeItem.PocketSwipeCallbacks mCallbacks;
 
     public ViewFlipperCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
@@ -54,12 +43,11 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.list_item_pocket,parent,false);
-        final View v = new MyMotionEvent(mContext, parent);
-        ((ViewGroup)v).addView(view);
-        final ViewHolder vh = new ViewHolder(v);
-        v.setTag(vh);
-        return v;
+        final View view = new PocketSwipeItem(context);
+        ((PocketSwipeItem)view).setCallbacks(mCallbacks);
+        final ViewHolder vh = new ViewHolder(view);
+        view.setTag(vh);
+        return view;
     }
 
     @Override
@@ -72,8 +60,6 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
         vh.title.setText(Html.fromHtml(htmlString));
         vh.excerpt.setText(excerpt);
         vh.id.setText(articleId);
-        vh.delete_btn.setOnClickListener(mButtonPlaceholderClickListener);
-        vh.save_btn.setOnClickListener(mButtonPlaceholderClickListener);
     }
 
     @Override
@@ -95,6 +81,12 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     }
 
     @Override
+    protected void onContentChanged() {
+        Log.d(LOG_TAG, "onContentChanged");
+        super.onContentChanged();
+    }
+
+    @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(LOG_TAG, "onLoaderFinished was called:cursor size="+data.getCount());
         swapCursor(data);
@@ -106,73 +98,39 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     }
 
     private static class ViewHolder {
-        public final TextView title, excerpt,id;
-        public final Button delete_btn, save_btn;
+        public final TextView title, excerpt, id;
 
         public ViewHolder(View view){
             title = (TextView) view.findViewById(R.id.article_title);
             excerpt = (TextView) view.findViewById(R.id.article_excerpt);
             id = (TextView) view.findViewById(R.id.article_id);
-            delete_btn = (Button) view.findViewById(R.id.article_delete_btn);
-            save_btn = (Button) view.findViewById(R.id.article_save_btn);
+            Log.d(LOG_TAG, String.format("title=%s\nexcerpt=%s\nid=%s\n",title,excerpt,id));
         }
     }
 
-    private static class MyMotionEvent extends LinearLayout {
-
-        private float mStartX;
-        private int mCurrentArticlePosition;
-        private final AdapterViewFlipper mFlipper;
+    public void setSwipeCallbacks (PocketSwipeItem.PocketSwipeCallbacks cb){
+        mCallbacks = cb;
+    }
+    private static class DeleteItemTask extends AsyncTask<Integer, Void, Void>{
         private final Context mContext;
 
-        public MyMotionEvent(Context context, View parent) {
-            super(context);
-            mFlipper = (AdapterViewFlipper) parent;
+        public DeleteItemTask(Context context) {
+            super();
             mContext = context;
-            mCurrentArticlePosition = 0;
         }
 
         @Override
-        public boolean onTouchEvent(@NonNull MotionEvent event) {
-            final int action = event.getAction();
-            switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    mStartX = event.getX();
-                    return true;
-                case MotionEvent.ACTION_UP:
-                    final int nextArticle = getRandomArticlePosition();
-                    if (isSwipedLeft(event)) {
-                        deleteArticle();
-                        mFlipper.setOutAnimation(mContext, R.anim.slide_left);
-                        mFlipper.setDisplayedChild(nextArticle);
-                        return true;
-                    } else {
-                        mFlipper.setOutAnimation(mContext, R.anim.slide_right);
-                        mFlipper.setDisplayedChild(nextArticle);
-                        return true;
-                    }
-                default:
-                    return super.onTouchEvent(event);
-            }
+        protected Void doInBackground(Integer... params) {
+            final Integer articleIdToDelete = params[0];
+            deleteArticle(articleIdToDelete);
+            return null;
         }
-
-        private boolean isSwipedLeft(final MotionEvent event){
-            return mStartX > event.getX();
-        }
-
-        private int getRandomArticlePosition(){
-            final int size = mFlipper.getCount();
-            return (int) ((Math.random() * size) + 1);
-        }
-
-        private void deleteArticle(){
-            final TextView idView = (TextView) findViewById(R.id.article_id);
-            final String articleId = idView.getText().toString();
-            Log.d(LOG_TAG, "Deleting article " + articleId);
-            getContext().getContentResolver().delete(
+        private void deleteArticle(Integer id){
+            Log.d(LOG_TAG, "Deleting article " + id);
+            mContext.getContentResolver().delete(
                     PocketDataContract.PocketItemEntry.CONTENT_URI,
                     PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
-                    new String[]{articleId});
+                    new String[]{id.toString()});
         }
     }
 }

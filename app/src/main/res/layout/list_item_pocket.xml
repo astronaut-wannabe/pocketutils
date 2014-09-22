@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -49,35 +46,9 @@
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
         android:textSize="20sp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/article_delete_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginStart="@dimen/activity_vertical_margin"
-            android:text="Delete Article"/>
-
-        <android.support.v7.widget.Space
-            android:layout_width="0dip"
-            android:layout_height="0dip"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/article_save_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:text="Move to top of list"/>
-    </LinearLayout>
     <TextView
         android:id="@+id/article_id"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-</LinearLayout>
+</merge>
