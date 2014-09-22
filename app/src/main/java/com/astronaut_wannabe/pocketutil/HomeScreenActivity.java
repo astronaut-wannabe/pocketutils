@@ -1,29 +1,27 @@
 package com.astronaut_wannabe.pocketutil;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
+import com.astronaut_wannabe.pocketutil.ui.PocketListRecyclerView;
 
 
-public class HomeScreenActivity extends Activity {
+public class HomeScreenActivity extends FragmentActivity {
 
     public static final String LOG_TAG = HomeScreenActivity.class.getSimpleName();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PocketUtilSyncAdapter.initializeSyncAdapter(this);
+//        PocketUtilSyncAdapter.initializeSyncAdapter(this);
         setContentView(R.layout.activity_signin);
         final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         final boolean pocketAuthorized = prefs.getBoolean(getString(R.string.pocket_authorized), false);
-        final FragmentManager fm = getFragmentManager();
-
+        final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
 
         if (savedInstanceState == null && !pocketAuthorized) {
             fm.beginTransaction()
@@ -31,7 +29,7 @@ public class HomeScreenActivity extends Activity {
                     .commit();
         } else {
             fm.beginTransaction()
-                    .add(R.id.container, new HomeScreenFragment())
+                    .add(R.id.container, new PocketListRecyclerView())
                     .commit();
         }
         Log.d(LOG_TAG, "pocket authorized = " + pocketAuthorized);
