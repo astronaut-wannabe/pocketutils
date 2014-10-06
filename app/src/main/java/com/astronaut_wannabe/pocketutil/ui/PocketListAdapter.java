@@ -31,7 +31,8 @@ public class PocketListAdapter extends RecyclerView.Adapter<PocketListAdapter.Vi
         final View v = new PocketSwipeItem(parent.getContext());
         // set the view's size, margins, paddings and layout parameters
         final int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
-        final ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(matchParent, matchParent);
+        final int wrap = ViewGroup.LayoutParams.WRAP_CONTENT;
+        final ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(parent.getWidth(), matchParent);
         v.setLayoutParams(layoutParams);
         ViewHolder vh = new ViewHolder(v);
         return vh;

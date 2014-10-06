@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ public class PocketListRecyclerView extends Fragment {
 
     private PocketListAdapter mAdapter;
     private RecyclerView mRecycler;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,20 @@ public class PocketListRecyclerView extends Fragment {
         final View rootView = inflater.inflate(R.layout.recycler_view_test, container, false);
         mRecycler = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecycler.setHasFixedSize(true);
+        mRecycler.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+                Toast.makeText(recyclerView.getContext(), "ON intercept: "+ event, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+                Toast.makeText(recyclerView.getContext(), "ON touch: "+ event, Toast.LENGTH_SHORT).show();
+            }
+        });
         mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecycler.setLayoutManager(mLayoutManager);
 
         final String[] testData = new String[]{
