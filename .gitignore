@@ -8,8 +8,5 @@
 # ignore AndroidStudio files
 .idea/
 PocketUtil.iml
-gradle.properties
-gradle/
 gradlew.bat
-gradlew
 tmp/
