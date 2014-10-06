@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.astronaut_wannabe.pocketutil.R;
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
+import com.astronaut_wannabe.pocketutil.oauth.PocketApi;
 import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.pocket.PocketResponse;
 import com.google.gson.Gson;
@@ -25,92 +26,63 @@ import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by ***REMOVED*** on 9/14/14.
  */
 public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
-    /**
-     * Interval to sync with the user's Pocket list, in seconds.
-     * 60 secs * 180 = 3 hours
-     */
+    private static final String LOG_TAG = PocketUtilSyncAdapter.class.getSimpleName();
+    public final static String DELETE_POCKET_ITEMS = "DELETE_ARTICLES";
     public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
-
-    private static final String LOG_TAG = PocketUtilSyncAdapter.class.getSimpleName();
-    private final String mConsumerKey = "31435-0abb54732de387258fdc3ca5";
 
     public PocketUtilSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        final String url = "https://getpocket.com/v3/get";
-        final InputStream source = retrieveStream(url);
+    public void onPerformSync(Account account, Bundle extras, String authority,
+                              ContentProviderClient provider, SyncResult syncResult) {
+        final String [] articlesToDelete = extras.getStringArray(DELETE_POCKET_ITEMS);
+        deleteRemovedArticles(articlesToDelete);
 
-
-        if ( source != null) {
-            Gson gson = new Gson();
-
-            Reader reader = new InputStreamReader(source);
-
+        final InputStream source = retrieveStream();
+        if (source != null) {
+            final Gson gson = new Gson();
+            final Reader reader = new InputStreamReader(source);
             final PocketResponse pocketResponse = gson.fromJson(reader, PocketResponse.class);
             addPocketItemsToDb(pocketResponse);
         }
-        // dumpResponseToLog(retrieveStream(url));
     }
 
-    private InputStream retrieveStream(String url) {
-
-        final SharedPreferences prefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        final String prefKey = getContext().getString(R.string.pocket_access_key);
-        final String accessKey = prefs.getString(prefKey, null);
-
-        Log.d(LOG_TAG, "access_key is: " + accessKey);
-
-        if(accessKey == null){
-            return null;
+    private void deleteRemovedArticles(String[] articlesToDelete) {
+        final boolean thereAreArticlesToDelete = (articlesToDelete != null && articlesToDelete.length > 0);
+        if(thereAreArticlesToDelete){
+            // convert to JSON with gson
+            // send a delete API call
         }
+    }
 
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url);
-
-        // Add your data
-        final String sincePref = prefs.getString(getContext().getString(R.string.pocket_since_date), null);
-        final String since = sincePref != null ? sincePref : "0";
-        Log.d(LOG_TAG, "Current Since date is: " + since);
-
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-        nameValuePairs.add(new BasicNameValuePair("consumer_key", mConsumerKey));
-        nameValuePairs.add(new BasicNameValuePair("access_token", accessKey));
-        nameValuePairs.add(new BasicNameValuePair("count", "5000"));
-        nameValuePairs.add(new BasicNameValuePair("detailType", "complete"));
-        nameValuePairs.add(new BasicNameValuePair("since", since));
-
+    private InputStream retrieveStream() {
+        final DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost httpPost = null;
         try {
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            HttpResponse getResponse = client.execute(httppost);
+            httpPost = PocketApi.getRetrieveNewPocketItemsHttpRequest(getContext());
+            final HttpResponse getResponse = client.execute(httpPost);
             final int statusCode = getResponse.getStatusLine().getStatusCode();
 
             if (statusCode != HttpStatus.SC_OK) {
                 Log.w(getClass().getSimpleName(),
-                        "Error " + statusCode + " for URL " + url);
+                        "Error " + statusCode + " for URL " + PocketApi.RETRIEVE_CONTENT_URL);
                 return null;
             }
 
@@ -119,8 +91,8 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
 
         }
         catch (IOException e) {
-            httppost.abort();
-            Log.w(getClass().getSimpleName(), "Error for URL " + url, e);
+            httpPost.abort();
+            Log.w(getClass().getSimpleName(), "Error for URL " + PocketApi.RETRIEVE_CONTENT_URL, e);
         }
 
         return null;
@@ -182,33 +154,6 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             return null;
         }
     }
-
-    private void dumpResponseToLog(InputStream is){
-        BufferedReader reader = null;
-        final StringBuffer buffer = new StringBuffer();
-
-        try {
-            if (is == null) {
-                // Nothing to do.
-                return;
-            }
-
-            reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
-                buffer.append(line);
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error dumping the JSON from the response:", e);
-        }
-        final String mess = buffer.toString();
-        Log.d(LOG_TAG, mess);
-    }
-
     /**
      * Helper method to have the sync adapter sync immediately
      * @param context The context used to access the account service
@@ -245,40 +190,34 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
      * @return a fake account.
      */
     public static Account getSyncAccount(Context context) {
-// Get an instance of the Android account manager
-        AccountManager accountManager =
+        final AccountManager accountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
-
-// Create the account type and default account
-        Account newAccount = new Account(
-                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
-
-// If the password doesn't exist, the account doesn't exist
+        // Create the account type and default account
+        final Account newAccount = new Account(context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
+        // If the password doesn't exist, the account doesn't exist
         if ( null == accountManager.getPassword(newAccount) ) {
-
-/*
-* Add the account and account type, no password or user data
-* If successful, return the Account object, otherwise report an error.
-*/
+            /*
+            * Add the account and account type, no password or user data
+            * If successful, return the Account object, otherwise report an error.
+            */
             if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
                 return null;
             }
-/*
-* If you don't set android:syncable="true" in
-* in your <provider> element in the manifest,
-* then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
-* here.
-*/
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
             onAccountCreated(newAccount, context);
-
         }
         return newAccount;
     }
 
     private static void onAccountCreated(Account newAccount, Context context){
+        final String contentAuthority = context.getString(R.string.content_authority);
         PocketUtilSyncAdapter.configurePeriodicSync(context,SYNC_INTERVAL,SYNC_FLEXTIME);
-        ContentResolver.setSyncAutomatically(newAccount,
-                context.getString(R.string.content_authority), true);
+        ContentResolver.setSyncAutomatically(newAccount, contentAuthority, true);
         syncImmediately(context);
     }
 
