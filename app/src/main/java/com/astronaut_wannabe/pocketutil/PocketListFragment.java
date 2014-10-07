@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
+import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     @Override
     public void onPause() {
         super.onPause();
+        PocketUtilSyncAdapter.syncImmediately(getActivity());
         // TODO figure out how to batch this. Also, move to sync adapter.
         final ContentResolver cr = getActivity().getContentResolver();
         final String [] arg = new String[1];

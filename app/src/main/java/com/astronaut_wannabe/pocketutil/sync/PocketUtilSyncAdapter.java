@@ -166,6 +166,10 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
                 context.getString(R.string.content_authority), bundle);
     }
 
+    public static void deleteItemsFromPocket(){
+        final Bundle bundle = new Bundle();
+    }
+
     public static void configurePeriodicSync(Context context, int interval, int flexTime){
         final Account account = getSyncAccount(context);
         final String authority = context.getString(R.string.content_authority);

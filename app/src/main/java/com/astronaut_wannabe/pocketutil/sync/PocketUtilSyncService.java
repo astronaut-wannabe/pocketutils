@@ -10,20 +10,20 @@ import android.util.Log;
  */
 public class PocketUtilSyncService extends Service {
     private static final Object sSyncAdapterLock = new Object();
-    private static PocketUtilSyncAdapter sSunshineSyncAdapter = null;
+    private static PocketUtilSyncAdapter sPocketSyncAdapter = null;
 
     @Override
     public void onCreate() {
-        Log.d("SunshineSyncService", "onCreate - SunshineSyncService");
+        Log.d("PocketUtilSyncService", "onCreate - PocketUtilSyncService");
         synchronized (sSyncAdapterLock) {
-            if (sSunshineSyncAdapter == null) {
-                sSunshineSyncAdapter = new PocketUtilSyncAdapter(getApplicationContext(), true);
+            if (sPocketSyncAdapter == null) {
+                sPocketSyncAdapter = new PocketUtilSyncAdapter(getApplicationContext(), true);
             }
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return sSunshineSyncAdapter.getSyncAdapterBinder();
+        return sPocketSyncAdapter.getSyncAdapterBinder();
     }
 }
