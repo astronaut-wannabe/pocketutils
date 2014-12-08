@@ -29,6 +29,7 @@ public class PocketDbHelper extends SQLiteOpenHelper {
                 PocketItemEntry.COLUMN_EXCERPT + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_RESOLVED_URL + " TEXT NOT NULL, " +
                 PocketItemEntry.COLUMN_POCKET_ITEM_ID + " TEXT NOT NULL, " +
+                PocketItemEntry.COLUMN_IMAGE_URL + " TEXT NOT NULL, " +
 
                 // To assure the application have just one of each unique item, it's created a
                 // UNIQUE constraint with REPLACE strategy

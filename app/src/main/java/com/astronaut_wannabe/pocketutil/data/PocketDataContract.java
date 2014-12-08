@@ -60,6 +60,8 @@ public class PocketDataContract {
         public static final String COLUMN_RESOLVED_URL = "resolved_url";
         // the title of the item
         public static final String COLUMN_TITLE = "title";
+        // the image url (if any) for the article image
+        public static final String COLUMN_IMAGE_URL = "image_url";
 
         public static Uri buildPocketItemUriWithItemId(String itemId) {
             return CONTENT_URI.buildUpon().appendPath(itemId).build();

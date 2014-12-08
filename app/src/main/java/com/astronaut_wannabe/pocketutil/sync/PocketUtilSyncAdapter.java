@@ -19,6 +19,7 @@ import android.util.Log;
 import com.astronaut_wannabe.pocketutil.R;
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 import com.astronaut_wannabe.pocketutil.oauth.PocketApi;
+import com.astronaut_wannabe.pocketutil.pocket.PocketImageItem;
 import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.pocket.PocketResponse;
 import com.google.gson.Gson;
@@ -134,6 +135,15 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             value.put(PocketDataContract.PocketItemEntry.COLUMN_TITLE, item.resolved_title);
             value.put(PocketDataContract.PocketItemEntry.COLUMN_RESOLVED_URL, item.resolved_url);
             value.put(PocketDataContract.PocketItemEntry.COLUMN_EXCERPT, item.excerpt);
+            if(item.has_image > 0){
+                for (PocketImageItem image : item.images.values()) {
+                    value.put(PocketDataContract.PocketItemEntry.COLUMN_IMAGE_URL, image.src);
+                    break;
+                }
+            } else {
+                value.put(PocketDataContract.PocketItemEntry.COLUMN_IMAGE_URL, "");
+            }
+
             ret[i] = value;
         }
         return ret;

@@ -2,6 +2,7 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
@@ -25,7 +27,8 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
             PocketDataContract.PocketItemEntry.COLUMN_TITLE,
             PocketDataContract.PocketItemEntry.COLUMN_EXCERPT,
             PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID,
-            PocketDataContract.PocketItemEntry.COLUMN_RESOLVED_URL
+            PocketDataContract.PocketItemEntry.COLUMN_RESOLVED_URL,
+            PocketDataContract.PocketItemEntry.COLUMN_IMAGE_URL
     };
 
     // Indices tied to the COLUMNS, if the column order changes in the table, these must be updated
@@ -34,8 +37,11 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
     public final static int COL_EXCERPT  = 2;
     public final static int COL_POCKET_ITEM_ID = 3;
     public final static int COL_POCKET_URL = 4;
+    public final static int COL_IMAGE_URL = 5;
 
     private PocketSwipeItem.PocketSwipeCallbacks mCallbacks;
+
+    private ImageLoadTask mCurrentTask = null;
 
     public ViewFlipperCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
@@ -56,10 +62,21 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
         final String title = cursor.getString(COL_TITLE);
         final String excerpt = cursor.getString(COL_EXCERPT);
         final String articleId = cursor.getString(COL_POCKET_ITEM_ID);
+        final String imageUrl = cursor.getString(COL_IMAGE_URL);
         final String htmlString = mContext.getString(R.string.title_and_synopsis_format, title);
         vh.title.setText(Html.fromHtml(htmlString));
         vh.excerpt.setText(excerpt);
         vh.id.setText(articleId);
+        if (mCurrentTask != null) {
+            mCurrentTask.cancel(true);
+        }
+        if(imageUrl.equals(""))
+            Log.d(LOG_TAG, "no image for " + title);
+        else {
+            Log.d(LOG_TAG, "Loading image for: " + title);
+            mCurrentTask = new ImageLoadTask(vh.image);
+            mCurrentTask.execute(imageUrl);
+        }
     }
 
     @Override
@@ -99,11 +116,13 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     private static class ViewHolder {
         public final TextView title, excerpt, id;
+        public final ImageView image;
 
         public ViewHolder(View view){
             title = (TextView) view.findViewById(R.id.article_title);
             excerpt = (TextView) view.findViewById(R.id.article_excerpt);
             id = (TextView) view.findViewById(R.id.article_id);
+            image = (ImageView) view.findViewById(R.id.home_screen_image);
             Log.d(LOG_TAG, String.format("title=%s\nexcerpt=%s\nid=%s\n",title,excerpt,id));
         }
     }
@@ -131,6 +150,25 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
                     PocketDataContract.PocketItemEntry.CONTENT_URI,
                     PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
                     new String[]{id.toString()});
+        }
+    }
+
+    private class ImageLoadTask extends AsyncTask<String,Void,Bitmap>{
+        private final ImageView mImageView;
+        public ImageLoadTask(ImageView view){
+            mImageView = view;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            return ImageUtils.load(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if(bitmap != null) {
+                mImageView.setImageBitmap(bitmap);
+            }
         }
     }
 }
