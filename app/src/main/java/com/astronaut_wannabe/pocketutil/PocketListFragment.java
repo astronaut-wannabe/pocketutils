@@ -1,8 +1,11 @@
 package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
+import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
 import java.util.HashSet;
@@ -123,5 +127,25 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(getActivity(), R.anim.slide_right);
         mFlipper.setDisplayedChild(nextArticle);
+    }
+
+    @Override
+    public void onTap() {
+        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
+        final String id = currentArticle.getText().toString();
+        final Uri uri = PocketItemEntry.buildPocketItemUriWithItemId(id);
+        final Cursor cursor = getActivity().getContentResolver().query(uri,null,null,null,null);
+        if(cursor.moveToFirst()) {
+            final int col = cursor.getColumnIndex(PocketItemEntry.COLUMN_RESOLVED_URL);
+            final String url = cursor.getString(col);
+            Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+            intent.setAction("org.mozilla.gecko.BOOKMARK");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("args", "--url=" + url);
+            intent.setData(Uri.parse(url));
+            getActivity().startActivity(intent);
+        }
     }
 }

@@ -27,6 +27,11 @@ public class PocketSwipeItem extends LinearLayout {
             public void onRightSwipe() {
                 //noop
             }
+
+            @Override
+            public void onTap() {
+
+            }
         };
     }
 
@@ -52,6 +57,10 @@ public class PocketSwipeItem extends LinearLayout {
                 mStartX = event.getX();
                 return true;
             case MotionEvent.ACTION_UP:
+                if(isTapped(event)){
+                    mCallbacks.onTap();
+                    return true;
+                }
                 if (isSwipedLeft(event)) {
                     mCallbacks.onLeftSwipe();
                     return true;
@@ -66,11 +75,16 @@ public class PocketSwipeItem extends LinearLayout {
 
 
     private boolean isSwipedLeft(final MotionEvent event){
-        return mStartX > event.getX();
+        return mStartX > event.getX() + 10;
+    }
+    private boolean isTapped(final MotionEvent event){
+        final float endX = event.getX();
+        return endX <= mStartX + 10 && endX >= mStartX - 10;
     }
 
     public static interface PocketSwipeCallbacks{
         public void onLeftSwipe();
         public void onRightSwipe();
+        public void onTap();
     }
 }

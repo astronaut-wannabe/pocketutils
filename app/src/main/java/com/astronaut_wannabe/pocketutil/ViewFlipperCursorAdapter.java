@@ -10,12 +10,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 
@@ -168,6 +170,9 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
         protected void onPostExecute(Bitmap bitmap) {
             if(bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
+                final Palette palette = Palette.generate(bitmap);
+                final int color = palette.getLightVibrantColor(R.color.placeholder_image_color);
+                mImageView.setBackgroundColor(color);
             }
         }
     }
