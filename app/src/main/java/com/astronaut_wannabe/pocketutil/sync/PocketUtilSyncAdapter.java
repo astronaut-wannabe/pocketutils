@@ -30,21 +30,26 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by ***REMOVED*** on 9/14/14.
- */
 public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = PocketUtilSyncAdapter.class.getSimpleName();
     public final static String DELETE_POCKET_ITEMS = "DELETE_ARTICLES";
     public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
+    public static final List<String> sArticlesToDelete = new ArrayList<String>();
 
     public PocketUtilSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -53,8 +58,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        final String [] articlesToDelete = extras.getStringArray(DELETE_POCKET_ITEMS);
-        deleteRemovedArticles(articlesToDelete);
+
+        if(extras.containsKey(DELETE_POCKET_ITEMS)) {
+            deleteRemovedArticles();
+            return;
+        }
 
         final InputStream source = retrieveStream();
         if (source != null) {
@@ -65,12 +73,52 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void deleteRemovedArticles(String[] articlesToDelete) {
-        final boolean thereAreArticlesToDelete = (articlesToDelete != null && articlesToDelete.length > 0);
-        if(thereAreArticlesToDelete){
-            // convert to JSON with gson
-            // send a delete API call
+    private void deleteRemovedArticles() {
+        final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToDelete.size());
+
+        for(String id : sArticlesToDelete) {
+            final Map<String, String> pocketRequestMap = new HashMap<>(1);
+            pocketRequestMap.put("action","tags_add");
+            pocketRequestMap.put("item_id",id);
+            pocketRequestMap.put("tags","pocketutil-delete");
+            requestList.add(pocketRequestMap);
         }
+
+        final InputStream source = retrieveOutStream(requestList);
+
+        if (source != null) {
+            final Gson gson = new Gson();
+            final Reader reader = new InputStreamReader(source);
+        }
+        final Gson gson = new Gson();
+        Log.d(LOG_TAG, gson.toJson(requestList).toString());
+    }
+
+    private InputStream retrieveOutStream(List<Map<String,String>>actions) {
+        final DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost httpPost = null;
+        try {
+            httpPost = PocketApi.getModifyPocketItemsHttpRequest(getContext(), actions);
+            final HttpResponse getResponse = client.execute(httpPost);
+            final int statusCode = getResponse.getStatusLine().getStatusCode();
+
+            if (statusCode != HttpStatus.SC_OK) {
+                Log.w(getClass().getSimpleName(),
+                        "Error " + statusCode + " for URL " + PocketApi.MODIFY_CONTENT_URL);
+                return null;
+            }
+
+            HttpEntity getResponseEntity = getResponse.getEntity();
+            return getResponseEntity.getContent();
+
+        }
+        catch (IOException e) {
+            httpPost.abort();
+            Log.w(getClass().getSimpleName(), "Error for URL " + PocketApi.MODIFY_CONTENT_URL, e);
+        }
+
+        return null;
+
     }
 
     private InputStream retrieveStream() {
@@ -176,8 +224,21 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
                 context.getString(R.string.content_authority), bundle);
     }
 
-    public static void deleteItemsFromPocket(){
-        final Bundle bundle = new Bundle();
+    /**
+     * Helper method to have the sync adapter delete a given list
+     * of Pocket articles immediately.
+     *
+     * @param context The context used to access the account service
+     * @param articles The article Ids to delete
+     */
+    public static void deleteImmediately(Context context, List<String> articles) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putBoolean(DELETE_POCKET_ITEMS, true);
+        sArticlesToDelete.addAll(articles);
+        ContentResolver.requestSync(getSyncAccount(context),
+                context.getString(R.string.content_authority), bundle);
     }
 
     public static void configurePeriodicSync(Context context, int interval, int flexTime){

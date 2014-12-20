@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.astronaut_wannabe.pocketutil.R;
+import com.google.gson.Gson;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -18,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The pocket Auth flow isn't actually OAuth, which is annoying. The flow is:
@@ -83,6 +85,17 @@ public class PocketApi {
         nameValuePairs.add(new BasicNameValuePair("count", "5000"));
         nameValuePairs.add(new BasicNameValuePair("detailType", "complete"));
         nameValuePairs.add(new BasicNameValuePair("since", PocketApi.getLatestSinceDate(context)));
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        return httppost;
+    }
+
+        @NonNull public static HttpPost getModifyPocketItemsHttpRequest(final Context context, List<Map<String,String>> actions )
+            throws UnsupportedEncodingException {
+        final HttpPost httppost = new HttpPost(MODIFY_CONTENT_URL);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        nameValuePairs.add(new BasicNameValuePair("consumer_key", PocketApi.getConsumerKey()));
+        nameValuePairs.add(new BasicNameValuePair("access_token", PocketApi.getAccessKey(context)));
+        nameValuePairs.add(new BasicNameValuePair("actions", new Gson().toJson(actions).toString()));
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         return httppost;
     }

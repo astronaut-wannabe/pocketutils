@@ -23,7 +23,9 @@ import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PocketListFragment extends Fragment implements PocketSwipeItem.PocketSwipeCallbacks{
@@ -48,6 +50,8 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         PocketUtilSyncAdapter.syncImmediately(getActivity());
         // TODO figure out how to batch this. Also, move to sync adapter.
         final ContentResolver cr = getActivity().getContentResolver();
+        final List<String> syncDelete = new ArrayList<String>(mArticlesToDelete.size());
+        syncDelete.addAll(mArticlesToDelete);
         final String [] arg = new String[1];
         for (String id : mArticlesToDelete){
             arg[0] = id;
@@ -56,6 +60,8 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
                     PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
                     arg);
         }
+        PocketUtilSyncAdapter.deleteImmediately(getActivity(), syncDelete);
+
         mArticlesToDelete.clear();
     }
 
