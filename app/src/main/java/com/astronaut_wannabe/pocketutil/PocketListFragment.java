@@ -37,6 +37,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     private ViewFlipperCursorAdapter mAdapter;
     private AdapterViewFlipper mFlipper;
     private Set<String> mArticlesToDelete;
+    private Set<String> mArticlesToMoveToTopOfList;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -51,7 +52,11 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         // TODO figure out how to batch this. Also, move to sync adapter.
         final ContentResolver cr = getActivity().getContentResolver();
         final List<String> syncDelete = new ArrayList<String>(mArticlesToDelete.size());
+        final List<String> syncAdd = new ArrayList<String>(mArticlesToMoveToTopOfList.size());
+
         syncDelete.addAll(mArticlesToDelete);
+        syncAdd.addAll(mArticlesToMoveToTopOfList);
+
         final String [] arg = new String[1];
         for (String id : mArticlesToDelete){
             arg[0] = id;
@@ -60,9 +65,10 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
                     PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
                     arg);
         }
-        PocketUtilSyncAdapter.deleteImmediately(getActivity(), syncDelete);
+        PocketUtilSyncAdapter.deleteImmediately(getActivity(), syncDelete, syncAdd);
 
         mArticlesToDelete.clear();
+        mArticlesToMoveToTopOfList.clear();
     }
 
     @Override
@@ -103,6 +109,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         mFlipper.setAdapter(mAdapter);
         mAdapter.setSwipeCallbacks(this);
         mArticlesToDelete = new HashSet<String>();
+        mArticlesToMoveToTopOfList = new HashSet<String>();
         return mFlipper;
     }
 
@@ -116,6 +123,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         mFlipper.setOutAnimation(getActivity(), R.anim.slide_left);
         mFlipper.setDisplayedChild(nextArticle);
     }
+
     private int getRandomArticle(){
         final int size = mFlipper.getCount();
         Log.d(LOG_TAG, String.format("current item count = %d", size));
@@ -130,6 +138,10 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
 
     @Override
     public void onRightSwipe() {
+        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
+        final String id = currentArticle.getText().toString();
+        mArticlesToMoveToTopOfList.add(id);
+
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(getActivity(), R.anim.slide_right);
         mFlipper.setDisplayedChild(nextArticle);

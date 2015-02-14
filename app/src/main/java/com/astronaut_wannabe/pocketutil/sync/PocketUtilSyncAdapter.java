@@ -50,6 +50,7 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     public static final List<String> sArticlesToDelete = new ArrayList<String>();
+    public static final List<String> sArticlesToAdd = new ArrayList<String>();
 
     public PocketUtilSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -61,6 +62,7 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
 
         if(extras.containsKey(DELETE_POCKET_ITEMS)) {
             deleteRemovedArticles();
+            reAddArticles();
             return;
         }
 
@@ -76,6 +78,7 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     private void deleteRemovedArticles() {
         final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToDelete.size());
 
+	    // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToDelete) {
             final Map<String, String> pocketRequestMap = new HashMap<>(1);
             pocketRequestMap.put("action","tags_add");
@@ -83,15 +86,23 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             pocketRequestMap.put("tags","pocketutil-delete");
             requestList.add(pocketRequestMap);
         }
+	    // actually send request to the server
+        retrieveOutStream(requestList);
+    }
 
-        final InputStream source = retrieveOutStream(requestList);
+    private void reAddArticles() {
+        final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToAdd.size());
 
-        if (source != null) {
-            final Gson gson = new Gson();
-            final Reader reader = new InputStreamReader(source);
+        // create JSON request to tag every item as "pocket-util-delete"
+        for(String id : sArticlesToAdd) {
+            final Map<String, String> pocketRequestMap = new HashMap<>(1);
+            pocketRequestMap.put("action","add");
+            pocketRequestMap.put("item_id",id);
+            pocketRequestMap.put("tags","pocketutil-add");
+            requestList.add(pocketRequestMap);
         }
-        final Gson gson = new Gson();
-        Log.d(LOG_TAG, gson.toJson(requestList).toString());
+        // actually send request to the server
+        retrieveOutStream(requestList);
     }
 
     private InputStream retrieveOutStream(List<Map<String,String>>actions) {
@@ -102,7 +113,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             final HttpResponse getResponse = client.execute(httpPost);
             final int statusCode = getResponse.getStatusLine().getStatusCode();
 
-            if (statusCode != HttpStatus.SC_OK) {
+	    // If ther server successfully recieved our request, delete the articles from our local db
+            if(statusCode == HttpStatus.SC_OK) {
+		//TODO delete from local db
+                sArticlesToDelete.clear();
+            }else {
                 Log.w(getClass().getSimpleName(),
                         "Error " + statusCode + " for URL " + PocketApi.MODIFY_CONTENT_URL);
                 return null;
@@ -229,14 +244,16 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
      * of Pocket articles immediately.
      *
      * @param context The context used to access the account service
-     * @param articles The article Ids to delete
+     * @param removedArticles The article Ids to delete
+     * @param addedArticles the articles to move to the top of the list
      */
-    public static void deleteImmediately(Context context, List<String> articles) {
+    public static void deleteImmediately(Context context, List<String> removedArticles, List<String> addedArticles) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         bundle.putBoolean(DELETE_POCKET_ITEMS, true);
-        sArticlesToDelete.addAll(articles);
+        sArticlesToDelete.addAll(removedArticles);
+        sArticlesToAdd.addAll(addedArticles);
         ContentResolver.requestSync(getSyncAccount(context),
                 context.getString(R.string.content_authority), bundle);
     }
