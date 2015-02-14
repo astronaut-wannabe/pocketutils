@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:id="@+id/article_excerpt"
+        android:bufferType="spannable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:textSize="20sp"/>
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="500dp"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin">
+        android:layout_height="fill_parent"
+        android:layout_above="@id/article_excerpt"
+        android:layout_alignParentTop="true">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -34,18 +44,6 @@
             android:background="@color/image_overlay_background"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/article_excerpt"
-        android:bufferType="spannable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginStart="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/article_id"

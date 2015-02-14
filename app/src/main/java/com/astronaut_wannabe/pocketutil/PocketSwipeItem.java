@@ -6,8 +6,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
-public class PocketSwipeItem extends LinearLayout {
+public class PocketSwipeItem extends RelativeLayout {
     private static final String LOG_TAG = PocketSwipeItem.class.getSimpleName();
 
     private PocketSwipeCallbacks mCallbacks;
@@ -15,7 +16,6 @@ public class PocketSwipeItem extends LinearLayout {
 
     public PocketSwipeItem(Context context) {
         super(context);
-        setOrientation(VERTICAL);
         LayoutInflater.from(context).inflate(R.layout.list_item_pocket, this, true);
         mCallbacks = new PocketSwipeCallbacks() {
             @Override
