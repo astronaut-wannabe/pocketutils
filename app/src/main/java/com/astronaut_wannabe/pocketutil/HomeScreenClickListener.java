@@ -13,12 +13,10 @@ public class HomeScreenClickListener implements View.OnClickListener {
 
         switch (id) {
             case R.id.home_screen_duplicates:
-                Toast.makeText(context, "clicked on duplicates", Toast.LENGTH_SHORT).show();
                 final CheckForDuplicatesTask task = new CheckForDuplicatesTask((android.app.Activity) v.getContext());
                 task.execute();
                 break;
             case R.id.home_screen_pocket_tinder:
-                Toast.makeText(context, "clicked on tinder", Toast.LENGTH_SHORT).show();
                 final Intent intent = new Intent(context, ListActivity.class);
                 intent.putExtra("src", HomeScreenFragment.class.getSimpleName());
                 context.startActivity(intent);
