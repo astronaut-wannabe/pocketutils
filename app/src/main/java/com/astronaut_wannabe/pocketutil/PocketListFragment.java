@@ -57,14 +57,6 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         syncDelete.addAll(mArticlesToDelete);
         syncAdd.addAll(mArticlesToMoveToTopOfList);
 
-        final String [] arg = new String[1];
-        for (String id : mArticlesToDelete){
-            arg[0] = id;
-            cr.delete(
-                    PocketItemEntry.CONTENT_URI,
-                    PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
-                    arg);
-        }
         PocketUtilSyncAdapter.deleteImmediately(getActivity(), syncDelete, syncAdd);
 
         mArticlesToDelete.clear();
