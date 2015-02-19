@@ -30,13 +30,10 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,21 +73,27 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void deleteRemovedArticles() {
+        if(sArticlesToDelete.isEmpty())
+            return;
+
         final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToDelete.size());
 
 	    // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToDelete) {
             final Map<String, String> pocketRequestMap = new HashMap<>(1);
-            pocketRequestMap.put("action","tags_add");
+            pocketRequestMap.put("action","delete");
             pocketRequestMap.put("item_id",id);
-            pocketRequestMap.put("tags","pocketutil-delete");
             requestList.add(pocketRequestMap);
         }
 	    // actually send request to the server
-        retrieveOutStream(requestList);
+        if(postToPocket(requestList))
+            sArticlesToDelete.clear();
     }
 
     private void reAddArticles() {
+        if(sArticlesToAdd.isEmpty())
+            return;
+
         final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToAdd.size());
 
         // create JSON request to tag every item as "pocket-util-delete"
@@ -102,10 +105,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             requestList.add(pocketRequestMap);
         }
         // actually send request to the server
-        retrieveOutStream(requestList);
+        if(postToPocket(requestList))
+            sArticlesToAdd.clear();
     }
 
-    private InputStream retrieveOutStream(List<Map<String,String>>actions) {
+    private boolean postToPocket(List<Map<String, String>> actions) {
         final DefaultHttpClient client = new DefaultHttpClient();
         HttpPost httpPost = null;
         try {
@@ -113,27 +117,19 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             final HttpResponse getResponse = client.execute(httpPost);
             final int statusCode = getResponse.getStatusLine().getStatusCode();
 
-	    // If ther server successfully recieved our request, delete the articles from our local db
             if(statusCode == HttpStatus.SC_OK) {
-		//TODO delete from local db
-                sArticlesToDelete.clear();
-            }else {
+                return true;
+            } else {
                 Log.w(getClass().getSimpleName(),
                         "Error " + statusCode + " for URL " + PocketApi.MODIFY_CONTENT_URL);
-                return null;
+                return false;
             }
-
-            HttpEntity getResponseEntity = getResponse.getEntity();
-            return getResponseEntity.getContent();
-
         }
         catch (IOException e) {
             httpPost.abort();
             Log.w(getClass().getSimpleName(), "Error for URL " + PocketApi.MODIFY_CONTENT_URL, e);
         }
-
-        return null;
-
+        return true;
     }
 
     private InputStream retrieveStream() {
