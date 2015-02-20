@@ -46,8 +46,8 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     public final static String DELETE_POCKET_ITEMS = "DELETE_ARTICLES";
     public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
-    public static final List<String> sArticlesToDelete = new ArrayList<>();
-    public static final List<String> sArticlesToAdd = new ArrayList<>();
+    public static final List<String> sArticlesToDelete = new ArrayList<String>();
+    public static final List<String> sArticlesToAdd = new ArrayList<String>();
 
     public PocketUtilSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -197,8 +197,8 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
             if(item.has_image > 0){
                 for (PocketImageItem image : item.images.values()) {
                     value.put(PocketDataContract.PocketItemEntry.COLUMN_IMAGE_URL, image.src);
+                    break;
                 }
-                break;
             } else {
                 value.put(PocketDataContract.PocketItemEntry.COLUMN_IMAGE_URL, "");
             }
