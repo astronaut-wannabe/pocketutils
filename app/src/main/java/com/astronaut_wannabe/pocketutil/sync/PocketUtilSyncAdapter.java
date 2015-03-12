@@ -76,11 +76,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
         if(sArticlesToDelete.isEmpty())
             return;
 
-        final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToDelete.size());
+        final List<Map<String, String>> requestList = new ArrayList<Map<String, String>>(sArticlesToDelete.size());
 
 	    // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToDelete) {
-            final Map<String, String> pocketRequestMap = new HashMap<>(1);
+            final Map<String, String> pocketRequestMap = new HashMap<String, String>(1);
             pocketRequestMap.put("action","delete");
             pocketRequestMap.put("item_id",id);
             requestList.add(pocketRequestMap);
@@ -94,11 +94,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
         if(sArticlesToAdd.isEmpty())
             return;
 
-        final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToAdd.size());
+        final List<Map<String, String>> requestList = new ArrayList<Map<String, String>>(sArticlesToAdd.size());
 
         // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToAdd) {
-            final Map<String, String> pocketRequestMap = new HashMap<>(1);
+            final Map<String, String> pocketRequestMap = new HashMap<String, String>(1);
             pocketRequestMap.put("action","add");
             pocketRequestMap.put("item_id",id);
             pocketRequestMap.put("tags","pocketutil-add");
