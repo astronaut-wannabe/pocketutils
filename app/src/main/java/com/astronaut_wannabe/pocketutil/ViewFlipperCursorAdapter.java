@@ -2,24 +2,23 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
+import com.bumptech.glide.Glide;
 
 public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderManager.LoaderCallbacks <Cursor>{
     private static final String LOG_TAG = ViewFlipperCursorAdapter.class.getSimpleName();
@@ -43,10 +42,11 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
 
     private PocketSwipeItem.PocketSwipeCallbacks mCallbacks;
 
-    private ImageLoadTask mCurrentTask = null;
+    private final Fragment mFragment;
 
-    public ViewFlipperCursorAdapter(Context context, Cursor c, int flags) {
+    public ViewFlipperCursorAdapter(Context context, Cursor c, int flags, PocketListFragment pocketListFragment) {
         super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
+        mFragment = pocketListFragment;
     }
 
     @Override
@@ -69,15 +69,17 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
         vh.title.setText(Html.fromHtml(htmlString));
         vh.excerpt.setText(excerpt);
         vh.id.setText(articleId);
-        if (mCurrentTask != null) {
-            mCurrentTask.cancel(true);
-        }
+
         if(imageUrl.equals(""))
             Log.d(LOG_TAG, "no image for " + title);
         else {
             Log.d(LOG_TAG, "Loading image for: " + title);
-            mCurrentTask = new ImageLoadTask(vh.image);
-            mCurrentTask.execute(imageUrl);
+            Glide.with(mFragment)
+                    .load(imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_add_overlay_logo)
+                    .crossFade()
+                    .into(vh.image);
         }
     }
 
@@ -152,28 +154,6 @@ public class ViewFlipperCursorAdapter extends CursorAdapter implements LoaderMan
                     PocketDataContract.PocketItemEntry.CONTENT_URI,
                     PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
                     new String[]{id.toString()});
-        }
-    }
-
-    private class ImageLoadTask extends AsyncTask<String,Void,Bitmap>{
-        private final ImageView mImageView;
-        public ImageLoadTask(ImageView view){
-            mImageView = view;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            return ImageUtils.load(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if(bitmap != null) {
-                mImageView.setImageBitmap(bitmap);
-                final Palette palette = Palette.generate(bitmap);
-                final int color = palette.getLightVibrantColor(R.color.placeholder_image_color);
-                mImageView.setBackgroundColor(color);
-            }
         }
     }
 }

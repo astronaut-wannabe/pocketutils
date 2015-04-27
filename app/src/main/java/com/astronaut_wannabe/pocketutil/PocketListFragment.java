@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
-import com.astronaut_wannabe.pocketutil.pocket.PocketItem;
 import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
 
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
                 R.layout.fragment_pocket_list, container, false);
         mFlipper.setInAnimation(getActivity(), R.anim.slide_in_from_top);
 
-        mAdapter = new ViewFlipperCursorAdapter(getActivity(), null, 0);
+        mAdapter = new ViewFlipperCursorAdapter(getActivity(), null, 0, this);
         mFlipper.setAdapter(mAdapter);
         mAdapter.setSwipeCallbacks(this);
         mArticlesToDelete = new HashSet<String>();
