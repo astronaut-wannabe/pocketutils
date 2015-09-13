@@ -3,7 +3,6 @@
 
     <string name="app_name" translatable="false">PocketUtil</string>
     <string name="title_and_synopsis_format" translatable="false"><![CDATA[<b>%1$s</b>]]></string>
-    <string name="home_screen_label_format" translatable="true"><![CDATA[<b>Current List Size: </b>%d]]></string>
 
     <!-- Action Settings -->
     <string name="action_settings" translatable="true">Settings</string>

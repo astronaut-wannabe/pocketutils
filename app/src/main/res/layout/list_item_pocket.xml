@@ -9,6 +9,7 @@
         android:minHeight="200dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:textSize="20sp"/>
 
     <FrameLayout
@@ -29,8 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:paddingStart="@dimen/activity_vertical_margin"
-            android:paddingEnd="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_vertical_margin"
             android:paddingTop="@dimen/default_gap"
