@@ -8,8 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
-
 public class ListActivity extends FragmentActivity {
 
     public static final String LOG_TAG = ListActivity.class.getSimpleName();
@@ -57,9 +55,6 @@ public class ListActivity extends FragmentActivity {
         final FragmentManager fm = getSupportFragmentManager();
         final Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
         fm.beginTransaction().remove(fragment).commit();
-
-        // Actually delete the whole database
-        getContentResolver().delete(PocketDataContract.PocketItemEntry.CONTENT_URI, null, null);
 
         // Create a new, empty list fragment
         fm.beginTransaction()

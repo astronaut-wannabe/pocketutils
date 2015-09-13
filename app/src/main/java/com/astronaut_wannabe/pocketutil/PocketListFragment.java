@@ -30,7 +30,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
 
     private final static int POCKET_LOADER = 0;
 
-    private ViewFlipperCursorAdapter mAdapter;
+//    private ViewFlipperCursorAdapter mAdapter;
     private AdapterViewFlipper mFlipper;
     private Set<String> mArticlesToDelete;
     private Set<String> mArticlesToMoveToTopOfList;
@@ -38,7 +38,7 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(POCKET_LOADER, null, mAdapter);
+//        getLoaderManager().initLoader(POCKET_LOADER, null, mAdapter);
     }
 
     @Override
@@ -82,11 +82,11 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
                 R.layout.fragment_pocket_list, container, false);
         mFlipper.setInAnimation(getActivity(), R.anim.slide_in_from_top);
 
-        mAdapter = new ViewFlipperCursorAdapter(getActivity(), null, 0, this);
-        mFlipper.setAdapter(mAdapter);
-        mAdapter.setSwipeCallbacks(this);
-        mArticlesToDelete = new HashSet<String>();
-        mArticlesToMoveToTopOfList = new HashSet<String>();
+//        mAdapter = new ViewFlipperCursorAdapter(getActivity(), null, 0, this);
+//        mFlipper.setAdapter(mAdapter);
+//        mAdapter.setSwipeCallbacks(this);
+//        mArticlesToDelete = new HashSet<String>();
+//        mArticlesToMoveToTopOfList = new HashSet<String>();
         return mFlipper;
     }
 

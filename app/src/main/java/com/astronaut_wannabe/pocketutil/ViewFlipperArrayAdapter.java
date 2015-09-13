@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.astronaut_wannabe.model.PocketImageItem;
 import com.astronaut_wannabe.model.PocketItem;
-import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
 import com.bumptech.glide.Glide;
 
 public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
@@ -36,7 +35,7 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
             convertView = new PocketSwipeItem(parent.getContext());
-            ((PocketSwipeItem)convertView).setCallbacks(mCallbacks);
+//            ((PocketSwipeItem)convertView).setCallbacks(mCallbacks);
             final ViewHolder vh = new ViewHolder(convertView);
             convertView.setTag(vh);
         }
@@ -78,27 +77,5 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
 
     public void setSwipeCallbacks (PocketSwipeItem.PocketSwipeCallbacks cb){
         mCallbacks = cb;
-    }
-    private static class DeleteItemTask extends AsyncTask<Integer, Void, Void>{
-        private final Context mContext;
-
-        public DeleteItemTask(Context context) {
-            super();
-            mContext = context;
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            final Integer articleIdToDelete = params[0];
-            deleteArticle(articleIdToDelete);
-            return null;
-        }
-        private void deleteArticle(Integer id){
-            Log.d(LOG_TAG, "Deleting article " + id);
-            mContext.getContentResolver().delete(
-                    PocketDataContract.PocketItemEntry.CONTENT_URI,
-                    PocketDataContract.PocketItemEntry.COLUMN_POCKET_ITEM_ID + " =?",
-                    new String[]{id.toString()});
-        }
     }
 }
