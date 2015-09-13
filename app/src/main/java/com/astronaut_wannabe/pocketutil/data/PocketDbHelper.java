@@ -3,6 +3,7 @@ package com.astronaut_wannabe.pocketutil.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
 
 public class PocketDbHelper extends SQLiteOpenHelper {

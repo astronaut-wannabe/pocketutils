@@ -17,25 +17,25 @@ package com.astronaut_wannabe.pocketutil;
  */
 
 
-        import org.apache.http.params.HttpParams;
-        import org.apache.http.params.BasicHttpParams;
-        import org.apache.http.params.HttpProtocolParams;
-        import org.apache.http.params.HttpConnectionParams;
-        import org.apache.http.HttpVersion;
-        import org.apache.http.HttpResponse;
-        import org.apache.http.HttpHost;
-        import org.apache.http.client.methods.HttpHead;
-        import org.apache.http.client.methods.HttpGet;
-        import org.apache.http.client.params.HttpClientParams;
-        import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-        import org.apache.http.impl.client.DefaultHttpClient;
-        import org.apache.http.conn.scheme.SchemeRegistry;
-        import org.apache.http.conn.scheme.Scheme;
-        import org.apache.http.conn.scheme.PlainSocketFactory;
-        import org.apache.http.conn.ssl.SSLSocketFactory;
-        import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 
-        import java.io.IOException;
+import java.io.IOException;
 
 public class HttpManager {
     private static final DefaultHttpClient sClient;
