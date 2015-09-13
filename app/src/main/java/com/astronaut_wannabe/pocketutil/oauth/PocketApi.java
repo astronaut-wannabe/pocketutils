@@ -82,7 +82,7 @@ public class PocketApi {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("consumer_key", PocketApi.getConsumerKey()));
         nameValuePairs.add(new BasicNameValuePair("access_token", PocketApi.getAccessKey(context)));
-        nameValuePairs.add(new BasicNameValuePair("count", "5000"));
+        nameValuePairs.add(new BasicNameValuePair("count", "1000"));
         nameValuePairs.add(new BasicNameValuePair("detailType", "complete"));
         nameValuePairs.add(new BasicNameValuePair("since", PocketApi.getLatestSinceDate(context)));
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

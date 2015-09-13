@@ -33,8 +33,7 @@
 
         <activity
             android:name=".ListActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".HomeScreenActivity">
+            android:label="@string/app_name">
         </activity>
 
         <provider

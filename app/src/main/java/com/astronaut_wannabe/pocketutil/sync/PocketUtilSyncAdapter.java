@@ -46,8 +46,8 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
     public final static String DELETE_POCKET_ITEMS = "DELETE_ARTICLES";
     public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
-    public static final List<String> sArticlesToDelete = new ArrayList<String>();
-    public static final List<String> sArticlesToAdd = new ArrayList<String>();
+    public static final List<String> sArticlesToDelete = new ArrayList<>();
+    public static final List<String> sArticlesToAdd = new ArrayList<>();
 
     public PocketUtilSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -80,7 +80,7 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	    // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToDelete) {
-            final Map<String, String> pocketRequestMap = new HashMap<String, String>(1);
+            final Map<String, String> pocketRequestMap = new HashMap<>(1);
             pocketRequestMap.put("action","delete");
             pocketRequestMap.put("item_id",id);
             requestList.add(pocketRequestMap);
@@ -94,11 +94,11 @@ public class PocketUtilSyncAdapter extends AbstractThreadedSyncAdapter {
         if(sArticlesToAdd.isEmpty())
             return;
 
-        final List<Map<String, String>> requestList = new ArrayList<Map<String, String>>(sArticlesToAdd.size());
+        final List<Map<String, String>> requestList = new ArrayList<>(sArticlesToAdd.size());
 
         // create JSON request to tag every item as "pocket-util-delete"
         for(String id : sArticlesToAdd) {
-            final Map<String, String> pocketRequestMap = new HashMap<String, String>(1);
+            final Map<String, String> pocketRequestMap = new HashMap<>(1);
             pocketRequestMap.put("action","add");
             pocketRequestMap.put("item_id",id);
             pocketRequestMap.put("tags","pocketutil-add");

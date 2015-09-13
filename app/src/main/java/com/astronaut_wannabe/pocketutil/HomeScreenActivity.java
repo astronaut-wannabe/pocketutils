@@ -1,6 +1,7 @@
 package com.astronaut_wannabe.pocketutil;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -28,9 +29,8 @@ public class HomeScreenActivity extends FragmentActivity {
                     .add(R.id.container, new SignInFragment())
                     .commit();
         } else {
-            fm.beginTransaction()
-                    .add(R.id.container, new HomeScreenFragment())
-                    .commit();
+            final Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
         }
         Log.d(LOG_TAG, "pocket authorized = " + pocketAuthorized);
     }
