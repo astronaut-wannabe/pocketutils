@@ -7,6 +7,6 @@
 
 # ignore AndroidStudio files
 .idea/
-PocketUtil.iml
+*.iml
 gradlew.bat
 tmp/
