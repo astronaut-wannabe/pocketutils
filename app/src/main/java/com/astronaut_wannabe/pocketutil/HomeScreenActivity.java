@@ -1,38 +1,32 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
-
-
-public class HomeScreenActivity extends FragmentActivity {
+public class HomeScreenActivity extends Activity {
 
     public static final String LOG_TAG = HomeScreenActivity.class.getSimpleName();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PocketUtilSyncAdapter.initializeSyncAdapter(this);
-        setContentView(R.layout.activity_signin);
-        final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        final boolean pocketAuthorized = prefs.getBoolean(getString(R.string.pocket_authorized), false);
-        final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
 
-        if (savedInstanceState == null && !pocketAuthorized) {
-            fm.beginTransaction()
-                    .add(R.id.container, new SignInFragment())
-                    .commit();
+        if (!isAuthorized()) {
+            startActivity(new Intent(this, AuthActivity.class));
         } else {
-            final Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, SwipeActivity.class));
         }
-        Log.d(LOG_TAG, "pocket authorized = " + pocketAuthorized);
+    }
+
+    private boolean isAuthorized() {
+        final String prefKey = getString(R.string.pocket_access_key);
+        final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        return prefs.getString(prefKey, null) != null;
     }
 
     @Override

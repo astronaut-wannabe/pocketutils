@@ -19,9 +19,6 @@ import android.widget.AdapterViewFlipper;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.astronaut_wannabe.pocketutil.data.PocketDataContract.PocketItemEntry;
-import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,15 +44,12 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     @Override
     public void onPause() {
         super.onPause();
-        PocketUtilSyncAdapter.syncImmediately(getActivity());
         // TODO figure out how to batch this. Also, move to sync adapter.
         final List<String> syncDelete = new ArrayList<>(mArticlesToDelete.size());
         final List<String> syncAdd = new ArrayList<>(mArticlesToMoveToTopOfList.size());
 
         syncDelete.addAll(mArticlesToDelete);
         syncAdd.addAll(mArticlesToMoveToTopOfList);
-
-        PocketUtilSyncAdapter.deleteImmediately(getActivity(), syncDelete, syncAdd);
 
         mArticlesToDelete.clear();
         mArticlesToMoveToTopOfList.clear();
@@ -76,13 +70,6 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
          if (id == R.id.action_list_count){
-            final Activity activity = getActivity();
-            final Cursor cursor = activity.getContentResolver()
-                    .query(PocketItemEntry.CONTENT_URI,null,null,null,null);
-            if (cursor.moveToFirst())
-                Toast.makeText(activity,"Items in list: " +cursor.getCount(),Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(activity,"Items in list: " + 0,Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -141,19 +128,19 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
     public void onTap() {
         final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
         final String id = currentArticle.getText().toString();
-        final Uri uri = PocketItemEntry.buildPocketItemUriWithItemId(id);
-        final Cursor cursor = getActivity().getContentResolver().query(uri,null,null,null,null);
-        if(cursor.moveToFirst()) {
-            final int col = cursor.getColumnIndex(PocketItemEntry.COLUMN_RESOLVED_URL);
-            final String url = cursor.getString(col);
-            Intent intent = new Intent(Intent.ACTION_MAIN, null);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
-            intent.setAction("org.mozilla.gecko.BOOKMARK");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("args", "--url=" + url);
-            intent.setData(Uri.parse(url));
-            getActivity().startActivity(intent);
-        }
+        //final Uri uri = PocketItemEntry.buildPocketItemUriWithItemId(id);
+//        final Cursor cursor = getActivity().getContentResolver().query(uri,null,null,null,null);
+//        if(cursor.moveToFirst()) {
+          //  final int col = cursor.getColumnIndex(PocketItemEntry.COLUMN_RESOLVED_URL);
+//            final String url = cursor.getString(col);
+//            Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//            intent.setComponent(new ComponentName("org.mozilla.firefox", "org.mozilla.firefox.App"));
+//            intent.setAction("org.mozilla.gecko.BOOKMARK");
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.putExtra("args", "--url=" + url);
+//            intent.setData(Uri.parse(url));
+//            getActivity().startActivity(intent);
+       // }
     }
 }

@@ -9,8 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astronaut_wannabe.pocketutil.data.PocketDataContract;
-import com.astronaut_wannabe.pocketutil.sync.PocketUtilSyncAdapter;
-
 
 public class ListActivity extends FragmentActivity {
 
@@ -43,7 +41,7 @@ public class ListActivity extends FragmentActivity {
             resetFragmentToEmpty();
             return true;
         } else if (id == R.id.action_refresh) {
-            fetchList();
+            //fetchList();
             return true;
         }else
             return super.onOptionsItemSelected(item);
@@ -69,10 +67,5 @@ public class ListActivity extends FragmentActivity {
                 .commit();
 
     }
-
-    private void fetchList() {
-        PocketUtilSyncAdapter.syncImmediately(this);
-    }
-
 
 }

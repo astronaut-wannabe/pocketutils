@@ -13,8 +13,6 @@ public class SignInFragment  extends Fragment {
     private static final String LOG_TAG = SignInFragment.class.getSimpleName();
 
     public void signin() {
-        final SignInTask task = new SignInTask();
-        task.execute(getActivity());
     }
 
     @Override

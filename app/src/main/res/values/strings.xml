@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="oauth_redirect_url" translatable="false">pocketapp41140</string>
 
     <string name="app_name" translatable="false">PocketUtil</string>
     <string name="title_and_synopsis_format" translatable="false"><![CDATA[<b>%1$s</b>]]></string>
