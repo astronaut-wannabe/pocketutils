@@ -124,7 +124,23 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
 
     @Override
     public void onLeftSwipe() {
+        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
+        final String id = currentArticle.getText().toString();
+        //send retrofit call
+        mPocketClient.send(deleteRequest(Integer.parseInt(id)), new Callback<PocketSendResponse>() {
+            @Override
+            public void success(PocketSendResponse pocketSendResponse, Response response) {
+                Toast.makeText(getBaseContext(), "deleted " + id, Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void failure(RetrofitError error) {
+                // no op
+            }
+        });
+        final int nextArticle = getRandomArticle();
+        mFlipper.setOutAnimation(this, R.anim.slide_left);
+        mFlipper.setDisplayedChild(nextArticle);
     }
 
 
