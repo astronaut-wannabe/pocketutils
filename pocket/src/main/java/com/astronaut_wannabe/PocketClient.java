@@ -1,6 +1,8 @@
 package com.astronaut_wannabe;
 
 import com.astronaut_wannabe.model.PocketResponse;
+import com.astronaut_wannabe.model.PocketSendAction;
+import com.astronaut_wannabe.model.PocketSendResponse;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -38,6 +40,12 @@ public class PocketClient {
         public String count;
     }
 
+    public static class PostRequest {
+        public String access_token;
+        public String consumer_key;
+        public PocketSendAction[] actions;
+    }
+
     public interface Pocket {
         @POST("/oauth/request")
         public void obtainRequestToken(@Body TokenRequest request, Callback<TokenResponse> cb);
@@ -49,6 +57,7 @@ public class PocketClient {
         public void get(@Body GetRequest request, Callback<PocketResponse> cb);
 
         @POST("/send")
-        public void deleteMultipleItems();
+        public void send(@Body PostRequest request, Callback<PocketSendResponse> cb);
+
     }
 }

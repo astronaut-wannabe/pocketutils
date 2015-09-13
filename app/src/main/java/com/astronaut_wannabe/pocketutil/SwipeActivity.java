@@ -1,6 +1,5 @@
 package com.astronaut_wannabe.pocketutil;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,14 +9,14 @@ import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterViewFlipper;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.ViewFlipper;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.astronaut_wannabe.PocketClient;
-import com.astronaut_wannabe.model.PocketItem;
 import com.astronaut_wannabe.model.PocketResponse;
+import com.astronaut_wannabe.model.PocketSendAction;
+import com.astronaut_wannabe.model.PocketSendResponse;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -27,10 +26,10 @@ import retrofit.client.Response;
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 
 
-public class SwipeActivity extends ActionBarActivity {
+public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.PocketSwipeCallbacks {
     private static final String LOG_TAG = SwipeActivity.class.getSimpleName();
 
-    private ArrayAdapter<PocketItem> mAdapter;
+    private ViewFlipperArrayAdapter mAdapter;
     private AdapterViewFlipper mFlipper;
 
     private PocketClient.Pocket mPocketClient;
@@ -52,12 +51,12 @@ public class SwipeActivity extends ActionBarActivity {
             mToken = getAccessToken();
             mFlipper = (AdapterViewFlipper) findViewById(R.id.flipper);
             mFlipper.setInAnimation(this, R.anim.slide_in_from_top);
-            final Activity activity = this;
+            mAdapter = new ViewFlipperArrayAdapter(this);
+            mAdapter.setSwipeCallbacks(this);
 
             mPocketClient.get(createFetchRequest(1000), new Callback<PocketResponse>() {
                 @Override
                 public void success(PocketResponse pocketResponse, Response response) {
-                    mAdapter = new ViewFlipperArrayAdapter(activity);
                     mAdapter.addAll(pocketResponse.list.values());
                     mFlipper.setAdapter(mAdapter);
                     vs.showNext();
@@ -101,4 +100,65 @@ public class SwipeActivity extends ActionBarActivity {
         return req;
     }
 
+    private PocketClient.PostRequest deleteRequest(int item_id) {
+        return createSendRequest("delete",item_id);
+    }
+
+    private PocketClient.PostRequest addRequest(int item_id) {
+        return createSendRequest("add",item_id);
+    }
+
+    private PocketClient.PostRequest createSendRequest(String action, int item_id) {
+        final PocketClient.PostRequest req = new PocketClient.PostRequest();
+        req.access_token = mToken;
+        req.consumer_key = CONSUMER_KEY;
+
+        PocketSendAction act = new PocketSendAction();
+        act.action = action;
+        act.item_id = item_id;
+
+        req.actions = new PocketSendAction[] {act};
+
+        return req;
+    }
+
+    @Override
+    public void onLeftSwipe() {
+
+    }
+
+
+    private int getRandomArticle(){
+        final int size = mFlipper.getCount();
+        Log.d(LOG_TAG, String.format("current item count = %d", size));
+        int randomArticle;
+        randomArticle = (int) ((Math.random() * size) + 1);
+        return randomArticle;
+    }
+
+    @Override
+    public void onRightSwipe() {
+        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
+        final String id = currentArticle.getText().toString();
+        //send retrofit call
+        mPocketClient.send(addRequest(Integer.parseInt(id)), new Callback<PocketSendResponse>() {
+            @Override
+            public void success(PocketSendResponse pocketSendResponse, Response response) {
+                Toast.makeText(getBaseContext(), "added " + id, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                // no op
+            }
+        });
+        final int nextArticle = getRandomArticle();
+        mFlipper.setOutAnimation(this, R.anim.slide_right);
+        mFlipper.setDisplayedChild(nextArticle);
+    }
+
+    @Override
+    public void onTap() {
+
+    }
 }
