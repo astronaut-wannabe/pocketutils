@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class PocketSwipeItem extends RelativeLayout {
     private static final String LOG_TAG = PocketSwipeItem.class.getSimpleName();
@@ -20,16 +21,18 @@ public class PocketSwipeItem extends RelativeLayout {
             @Override
             public void onLeftSwipe() {
                 //noop
+                Toast.makeText(getContext(),"Swiped left: not implemented yet",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightSwipe() {
                 //noop
+                Toast.makeText(getContext(),"Swiped right: not implemented yet",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onTap() {
-
+                Toast.makeText(getContext(),"Tapped: not implemented yet",Toast.LENGTH_SHORT).show();
             }
         };
     }

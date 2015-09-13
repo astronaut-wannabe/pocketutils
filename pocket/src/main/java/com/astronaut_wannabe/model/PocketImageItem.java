@@ -1,4 +1,4 @@
-package com.astronaut_wannabe.pocketutil.pocket;
+package com.astronaut_wannabe.model;
 
 public class PocketImageItem {
     public int item_id;
