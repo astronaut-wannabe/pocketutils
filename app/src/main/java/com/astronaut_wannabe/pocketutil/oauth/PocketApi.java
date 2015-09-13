@@ -95,7 +95,7 @@ public class PocketApi {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("consumer_key", PocketApi.getConsumerKey()));
         nameValuePairs.add(new BasicNameValuePair("access_token", PocketApi.getAccessKey(context)));
-        nameValuePairs.add(new BasicNameValuePair("actions", new Gson().toJson(actions).toString()));
+        nameValuePairs.add(new BasicNameValuePair("actions", new Gson().toJson(actions)));
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         return httppost;
     }

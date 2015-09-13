@@ -49,9 +49,8 @@ public class PocketListFragment extends Fragment implements PocketSwipeItem.Pock
         super.onPause();
         PocketUtilSyncAdapter.syncImmediately(getActivity());
         // TODO figure out how to batch this. Also, move to sync adapter.
-        final ContentResolver cr = getActivity().getContentResolver();
-        final List<String> syncDelete = new ArrayList<String>(mArticlesToDelete.size());
-        final List<String> syncAdd = new ArrayList<String>(mArticlesToMoveToTopOfList.size());
+        final List<String> syncDelete = new ArrayList<>(mArticlesToDelete.size());
+        final List<String> syncAdd = new ArrayList<>(mArticlesToMoveToTopOfList.size());
 
         syncDelete.addAll(mArticlesToDelete);
         syncAdd.addAll(mArticlesToMoveToTopOfList);

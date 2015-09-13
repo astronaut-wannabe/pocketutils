@@ -158,7 +158,7 @@ public class PocketProvider extends ContentProvider {
                 try{
                     for (ContentValues value : values){
                         if (value.get("item_id") != null && value.getAsInteger("resolved_item_id") == 0) {
-                            final long delete_id = db.delete(
+                            db.delete(
                                     PocketItemEntry.TABLE_NAME,
                                     PocketItemEntry.COLUMN_POCKET_ITEM_ID + " = ?",
                                     new String[] {value.getAsString("item_id")}

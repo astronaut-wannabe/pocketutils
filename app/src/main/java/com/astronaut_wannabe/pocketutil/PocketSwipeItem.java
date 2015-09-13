@@ -81,9 +81,9 @@ public class PocketSwipeItem extends RelativeLayout {
         return endX <= mStartX + 10 && endX >= mStartX - 10;
     }
 
-    public static interface PocketSwipeCallbacks{
-        public void onLeftSwipe();
-        public void onRightSwipe();
-        public void onTap();
+    public interface PocketSwipeCallbacks{
+        void onLeftSwipe();
+        void onRightSwipe();
+        void onTap();
     }
 }
