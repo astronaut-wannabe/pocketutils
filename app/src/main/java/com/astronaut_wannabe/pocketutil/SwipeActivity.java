@@ -15,6 +15,9 @@ import android.widget.ViewSwitcher;
 import com.astronaut_wannabe.PocketClient;
 import com.astronaut_wannabe.model.PocketResponse;
 import com.astronaut_wannabe.model.PocketSendAction;
+import com.astronaut_wannabe.model.PocketSendResponse;
+
+import java.io.IOException;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -53,7 +56,7 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
             mAdapter = new ViewFlipperArrayAdapter(this);
             mAdapter.setSwipeCallbacks(this);
 
-            final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(1000));
+            final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(10));
 
             final Callback<PocketResponse> cb = new Callback<PocketResponse>() {
                 @Override
@@ -128,11 +131,11 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
     }
 
     @Override
-    public void onLeftSwipe() {
+    public void onLeftSwipe() throws IOException {
         final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
         final String id = currentArticle.getText().toString();
         //send retrofit call
-        mPocketClient.send(deleteRequest(Integer.parseInt(id)));
+        mPocketClient.send(deleteRequest(Integer.parseInt(id))).enqueue(stubCallback);
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(this, R.anim.slide_left);
         mFlipper.setDisplayedChild(nextArticle);
@@ -148,15 +151,27 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
     }
 
     @Override
-    public void onRightSwipe() {
+    public void onRightSwipe() throws IOException {
         final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
         final String id = currentArticle.getText().toString();
         //send retrofit call
-        mPocketClient.send(addRequest(Integer.parseInt(id)));
+        mPocketClient.send(addRequest(Integer.parseInt(id))).enqueue(stubCallback);
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(this, R.anim.slide_right);
         mFlipper.setDisplayedChild(nextArticle);
     }
+
+    private final static Callback<PocketSendResponse> stubCallback = new Callback<PocketSendResponse>() {
+        @Override
+        public void onResponse(Response<PocketSendResponse> response) {
+            //ignore for now, should probably remove the item from the adapter
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            //ignore
+        }
+    };
 
     @Override
     public void onTap() {

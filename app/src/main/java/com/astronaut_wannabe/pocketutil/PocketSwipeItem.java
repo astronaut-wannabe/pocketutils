@@ -8,6 +8,8 @@ import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class PocketSwipeItem extends RelativeLayout {
     private static final String LOG_TAG = PocketSwipeItem.class.getSimpleName();
 
@@ -64,10 +66,18 @@ public class PocketSwipeItem extends RelativeLayout {
                     return true;
                 }
                 if (isSwipedLeft(event)) {
-                    mCallbacks.onLeftSwipe();
+                    try {
+                        mCallbacks.onLeftSwipe();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 } else {
-                    mCallbacks.onRightSwipe();
+                    try {
+                        mCallbacks.onRightSwipe();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
             default:
@@ -85,8 +95,8 @@ public class PocketSwipeItem extends RelativeLayout {
     }
 
     public interface PocketSwipeCallbacks{
-        void onLeftSwipe();
-        void onRightSwipe();
+        void onLeftSwipe() throws IOException;
+        void onRightSwipe() throws IOException;
         void onTap();
     }
 }
