@@ -3,21 +3,28 @@ package com.astronaut_wannabe;
 import com.astronaut_wannabe.model.PocketResponse;
 import com.astronaut_wannabe.model.PocketSendAction;
 import com.astronaut_wannabe.model.PocketSendResponse;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
-import retrofit.Callback;
-import retrofit.RequestInterceptor;
+import java.io.IOException;
+
+import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.POST;
 
 public class PocketClient {
-    public static final String API_URL = "https://getpocket.com/v3";
+    public static final String API_URL = "https://getpocket.com";
     public static final String CONSUMER_KEY = "***REMOVED***";
 
-    public static RequestInterceptor sRequestInterceptor = new RequestInterceptor() {
+    public static Interceptor sRequestInterceptor = new Interceptor() {
         @Override
-        public void intercept(RequestFacade request) {
-            request.addHeader("Content-Type", "application/json; charset=UTF-8");
-            request.addHeader("X-Accept", "application/json");
+        public Response intercept(Chain chain) throws IOException {
+            final Request original_request = chain.request();
+            final Request new_request = original_request.newBuilder()
+                    .addHeader("X-Accept", "application/json")
+                    .build();
+            return chain.proceed(new_request);
         }
     };
 
@@ -47,17 +54,16 @@ public class PocketClient {
     }
 
     public interface Pocket {
-        @POST("/oauth/request")
-        public void obtainRequestToken(@Body TokenRequest request, Callback<TokenResponse> cb);
+        @POST("/v3/oauth/request")
+        public Call<TokenResponse> obtainRequestToken(@Body TokenRequest request);
 
-        @POST("/oauth/authorize")
-        public void authorizeToken(@Body TokenRequest request, Callback<TokenResponse> cb);
+        @POST("/v3/oauth/authorize")
+        public Call<TokenResponse> authorizeToken(@Body TokenRequest request);
 
-        @POST("/get")
-        public void get(@Body GetRequest request, Callback<PocketResponse> cb);
+        @POST("/v3/get")
+        public Call<PocketResponse> get(@Body GetRequest request);
 
-        @POST("/send")
-        public void send(@Body PostRequest request, Callback<PocketSendResponse> cb);
-
+        @POST("/v3/send")
+        public Call<PocketSendResponse> send(@Body PostRequest req);
     }
 }

@@ -10,18 +10,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterViewFlipper;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.astronaut_wannabe.PocketClient;
 import com.astronaut_wannabe.model.PocketResponse;
 import com.astronaut_wannabe.model.PocketSendAction;
-import com.astronaut_wannabe.model.PocketSendResponse;
 
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 
@@ -54,19 +53,22 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
             mAdapter = new ViewFlipperArrayAdapter(this);
             mAdapter.setSwipeCallbacks(this);
 
-            mPocketClient.get(createFetchRequest(1000), new Callback<PocketResponse>() {
+            final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(1000));
+
+            final Callback<PocketResponse> cb = new Callback<PocketResponse>() {
                 @Override
-                public void success(PocketResponse pocketResponse, Response response) {
-                    mAdapter.addAll(pocketResponse.list.values());
+                public void onResponse(Response<PocketResponse> response) {
+                    mAdapter.addAll(response.body().list.values());
                     mFlipper.setAdapter(mAdapter);
                     vs.showNext();
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    Log.e(LOG_TAG, error.toString());
+                public void onFailure(Throwable t) {
+                    Log.e(LOG_TAG, t.getMessage().toString());
                 }
-            });
+            };
+            call.enqueue(cb);
         } else {
             startActivity(new Intent(this, AuthActivity.class));
         }
@@ -85,11 +87,14 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
     }
 
     private PocketClient.Pocket getPocketClient() {
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(PocketClient.API_URL)
-                .setRequestInterceptor(PocketClient.sRequestInterceptor)
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PocketClient.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        return restAdapter.create(PocketClient.Pocket.class);
+
+        retrofit.client().networkInterceptors().add(PocketClient.sRequestInterceptor);
+
+        return retrofit.create(PocketClient.Pocket.class);
     }
 
     private PocketClient.GetRequest createFetchRequest(int numItems) {
@@ -127,17 +132,7 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
         final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
         final String id = currentArticle.getText().toString();
         //send retrofit call
-        mPocketClient.send(deleteRequest(Integer.parseInt(id)), new Callback<PocketSendResponse>() {
-            @Override
-            public void success(PocketSendResponse pocketSendResponse, Response response) {
-                Toast.makeText(getBaseContext(), "deleted " + id, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                // no op
-            }
-        });
+        mPocketClient.send(deleteRequest(Integer.parseInt(id)));
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(this, R.anim.slide_left);
         mFlipper.setDisplayedChild(nextArticle);
@@ -157,17 +152,7 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
         final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
         final String id = currentArticle.getText().toString();
         //send retrofit call
-        mPocketClient.send(addRequest(Integer.parseInt(id)), new Callback<PocketSendResponse>() {
-            @Override
-            public void success(PocketSendResponse pocketSendResponse, Response response) {
-                Toast.makeText(getBaseContext(), "added " + id, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                // no op
-            }
-        });
+        mPocketClient.send(addRequest(Integer.parseInt(id)));
         final int nextArticle = getRandomArticle();
         mFlipper.setOutAnimation(this, R.anim.slide_right);
         mFlipper.setDisplayedChild(nextArticle);

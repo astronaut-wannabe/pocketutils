@@ -11,10 +11,11 @@ import android.widget.Toast;
 
 import com.astronaut_wannabe.PocketClient;
 
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 import static com.astronaut_wannabe.PocketClient.Pocket;
@@ -40,12 +41,14 @@ public class AuthActivity extends FragmentActivity {
     }
 
     public void doAuth(View view) {
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(PocketClient.API_URL)
-                .setRequestInterceptor(PocketClient.sRequestInterceptor)
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PocketClient.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        final Pocket pocket = restAdapter.create(Pocket.class);
+        retrofit.client().networkInterceptors().add(PocketClient.sRequestInterceptor);
+
+        final Pocket pocket = retrofit.create(Pocket.class);
 
         // Get initial token
         final String redirectUrl = getString(R.string.oauth_redirect_url) + ":authdone";
@@ -53,23 +56,26 @@ public class AuthActivity extends FragmentActivity {
         req.consumer_key = PocketClient.CONSUMER_KEY;
         req.redirect_uri = redirectUrl;
 
-        pocket.obtainRequestToken(req, new Callback<PocketClient.TokenResponse>() {
+        Call<PocketClient.TokenResponse> call = pocket.obtainRequestToken(req);
+
+        final Callback<PocketClient.TokenResponse> cb = new Callback<PocketClient.TokenResponse>() {
+
             @Override
-            public void success(PocketClient.TokenResponse s, Response response) {
-                makeToast(s.code, response);
+            public void onResponse(Response<PocketClient.TokenResponse> response) {
+                makeToast(response.body().code, response);
                 final String prefKey = getString(R.string.pocket_access_key);
                 final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(prefKey, s.code);
+                editor.putString(prefKey, response.body().code);
                 editor.commit();
-                launchBrowser(s.code, redirectUrl);
+                launchBrowser(response.body().code, redirectUrl);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                makeToast(error);
+            public void onFailure(Throwable t) {
             }
-        });
+        };
+        call.enqueue(cb);
     }
 
     public void launchBrowser(String code, String url) {
@@ -88,36 +94,40 @@ public class AuthActivity extends FragmentActivity {
         req.code = code;
         req.consumer_key = key;
 
-        final RestAdapter restAdapter = new RestAdapter.Builder()
-                .setRequestInterceptor(PocketClient.sRequestInterceptor)
-                .setEndpoint(PocketClient.API_URL)
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(PocketClient.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        final Pocket pocket = restAdapter.create(Pocket.class);
-        pocket.authorizeToken(req, new Callback<PocketClient.TokenResponse>() {
+        retrofit.client().networkInterceptors().add(PocketClient.sRequestInterceptor);
+
+        final Pocket pocket = retrofit.create(Pocket.class);
+
+        Call<PocketClient.TokenResponse> call = pocket.authorizeToken(req);
+
+        final Callback<PocketClient.TokenResponse> cb = new Callback<PocketClient.TokenResponse>() {
+
             @Override
-            public void success(PocketClient.TokenResponse tokenResponse, Response response) {
+            public void onResponse(Response<PocketClient.TokenResponse> response) {
+                final String token = response.body().access_token;
                 final String prefKey = getString(R.string.pocket_access_key);
                 final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(prefKey, tokenResponse.access_token);
+                editor.putString(prefKey, token);
                 editor.commit();
 
-                makeToast(tokenResponse.username, response);
+                makeToast(response.body().username, response);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                makeToast(error);
-            }
-        });
+            public void onFailure(Throwable t) {
 
+            }
+        };
+        call.enqueue(cb);
     }
 
     public void makeToast(String s, Response r){
         Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-    }
-    public void makeToast(RetrofitError error){
-        Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
     }
 }
