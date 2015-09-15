@@ -1,23 +1,22 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterViewFlipper;
-import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.astronaut_wannabe.PocketClient;
+import com.astronaut_wannabe.model.PocketItem;
 import com.astronaut_wannabe.model.PocketResponse;
-import com.astronaut_wannabe.model.PocketSendAction;
-import com.astronaut_wannabe.model.PocketSendResponse;
+import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -28,59 +27,53 @@ import retrofit.Retrofit;
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 
 
-public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.PocketSwipeCallbacks {
+public class SwipeActivity extends ActionBarActivity {
     private static final String LOG_TAG = SwipeActivity.class.getSimpleName();
 
+    private SwipeFlingAdapterView mFlingContainer;
     private ViewFlipperArrayAdapter mAdapter;
-    private AdapterViewFlipper mFlipper;
-
+    private ViewSwitcher mSwitcher;
     private PocketClient.Pocket mPocketClient;
     private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final boolean isAuthenticated = isAuthorized();
-        if(isAuthenticated) {
-            setContentView(R.layout.activity_signin);
-            final ViewSwitcher vs = (ViewSwitcher) findViewById(R.id.viewSwitcher);
-            Animation out = AnimationUtils.loadAnimation(this,android.R.anim.fade_out);
-            Animation in = AnimationUtils.loadAnimation(this,android.R.anim.fade_in);
-            vs.setOutAnimation(out);
-            vs.setInAnimation(in);
+        setContentView(R.layout.activity_signin);
+        mFlingContainer = (SwipeFlingAdapterView) findViewById(R.id.swipe_container);
 
-            mPocketClient = getPocketClient();
-            mToken = getAccessToken();
-            mFlipper = (AdapterViewFlipper) findViewById(R.id.flipper);
-            mFlipper.setInAnimation(this, R.anim.slide_in_from_top);
-            mAdapter = new ViewFlipperArrayAdapter(this);
-            mAdapter.setSwipeCallbacks(this);
+        mSwitcher = (ViewSwitcher) findViewById(R.id.viewSwitcher);
+        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.fade_out);
+        Animation in = AnimationUtils.loadAnimation(this,android.R.anim.fade_in);
+        mSwitcher.setOutAnimation(out);
+        mSwitcher.setInAnimation(in);
 
-            final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(10));
+        mPocketClient = getPocketClient();
+        mToken = getAccessToken();
 
-            final Callback<PocketResponse> cb = new Callback<PocketResponse>() {
+        final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(1000));
+        final Activity activity = this;
+        final Callback<PocketResponse> cb = new Callback<PocketResponse>() {
                 @Override
                 public void onResponse(Response<PocketResponse> response) {
-                    mAdapter.addAll(response.body().list.values());
-                    mFlipper.setAdapter(mAdapter);
-                    vs.showNext();
-                }
+                    final ArrayList<PocketItem> data = new ArrayList<>();
+                    data.addAll(response.body().list.values());
+                    Collections.shuffle(data);
 
+                    mAdapter = new ViewFlipperArrayAdapter(activity, data);
+                    mFlingContainer.setFlingListener(new SwipeFlingListener(data, mAdapter, activity,mPocketClient));
+                    mAdapter.addAll(data);
+                    mAdapter.notifyDataSetChanged();
+                    mFlingContainer.setAdapter(mAdapter);
+                    mSwitcher.showNext();
+                }
+                
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e(LOG_TAG, t.getMessage().toString());
                 }
             };
-            call.enqueue(cb);
-        } else {
-            startActivity(new Intent(this, AuthActivity.class));
-        }
-    }
-
-    private boolean isAuthorized() {
-        final String prefKey = getString(R.string.pocket_access_key);
-        final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        return prefs.getString(prefKey, null) != null;
+        call.enqueue(cb);
     }
 
     private String getAccessToken() {
@@ -106,75 +99,5 @@ public class SwipeActivity extends ActionBarActivity implements PocketSwipeItem.
         req.consumer_key = CONSUMER_KEY;
         req.count = Integer.toString(numItems);
         return req;
-    }
-
-    private PocketClient.PostRequest deleteRequest(int item_id) {
-        return createSendRequest("delete",item_id);
-    }
-
-    private PocketClient.PostRequest addRequest(int item_id) {
-        return createSendRequest("add",item_id);
-    }
-
-    private PocketClient.PostRequest createSendRequest(String action, int item_id) {
-        final PocketClient.PostRequest req = new PocketClient.PostRequest();
-        req.access_token = mToken;
-        req.consumer_key = CONSUMER_KEY;
-
-        PocketSendAction act = new PocketSendAction();
-        act.action = action;
-        act.item_id = item_id;
-
-        req.actions = new PocketSendAction[] {act};
-
-        return req;
-    }
-
-    @Override
-    public void onLeftSwipe() throws IOException {
-        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
-        final String id = currentArticle.getText().toString();
-        //send retrofit call
-        mPocketClient.send(deleteRequest(Integer.parseInt(id))).enqueue(stubCallback);
-        final int nextArticle = getRandomArticle();
-        mFlipper.setOutAnimation(this, R.anim.slide_left);
-        mFlipper.setDisplayedChild(nextArticle);
-    }
-
-
-    private int getRandomArticle(){
-        final int size = mFlipper.getCount();
-        Log.d(LOG_TAG, String.format("current item count = %d", size));
-        int randomArticle;
-        randomArticle = (int) ((Math.random() * size) + 1);
-        return randomArticle;
-    }
-
-    @Override
-    public void onRightSwipe() throws IOException {
-        final TextView currentArticle = (TextView) mFlipper.getCurrentView().findViewById(R.id.article_id);
-        final String id = currentArticle.getText().toString();
-        //send retrofit call
-        mPocketClient.send(addRequest(Integer.parseInt(id))).enqueue(stubCallback);
-        final int nextArticle = getRandomArticle();
-        mFlipper.setOutAnimation(this, R.anim.slide_right);
-        mFlipper.setDisplayedChild(nextArticle);
-    }
-
-    private final static Callback<PocketSendResponse> stubCallback = new Callback<PocketSendResponse>() {
-        @Override
-        public void onResponse(Response<PocketSendResponse> response) {
-            //ignore for now, should probably remove the item from the adapter
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            //ignore
-        }
-    };
-
-    @Override
-    public void onTap() {
-
     }
 }

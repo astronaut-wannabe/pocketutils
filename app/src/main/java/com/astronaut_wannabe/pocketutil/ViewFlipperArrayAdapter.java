@@ -3,6 +3,7 @@ package com.astronaut_wannabe.pocketutil;
 import android.content.Context;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,26 +14,35 @@ import com.astronaut_wannabe.model.PocketImageItem;
 import com.astronaut_wannabe.model.PocketItem;
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+
 public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
     private static final String LOG_TAG = ViewFlipperArrayAdapter.class.getSimpleName();
 
-    private PocketSwipeItem.PocketSwipeCallbacks mCallbacks;
+    private final Context mContext;
+    private final ArrayList<PocketItem> mData;
 
-    public ViewFlipperArrayAdapter(Context context) {
-        super(context, R.layout.list_item_pocket);
+    public ViewFlipperArrayAdapter(Context context, ArrayList<PocketItem> data) {
+        super(context, R.layout.list_item_pocket, data);
+        mContext = context;
+        mData = data;
+    }
+
+    @Override
+    public int getCount() {
+        return mData.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
-            convertView = new PocketSwipeItem(parent.getContext());
-            ((PocketSwipeItem)convertView).setCallbacks(mCallbacks);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_pocket, parent, false);
             final ViewHolder vh = new ViewHolder(convertView);
             convertView.setTag(vh);
         }
 
         final ViewHolder vh = (ViewHolder) convertView.getTag();
-        final PocketItem item = getItem(position);
+        final PocketItem item = mData.get(position);
         vh.title.setText(Html.fromHtml(item.resolved_title));
         vh.excerpt.setText(item.excerpt);
         vh.id.setText(item.item_id+"");
@@ -66,7 +76,4 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
         }
     }
 
-    public void setSwipeCallbacks (PocketSwipeItem.PocketSwipeCallbacks cb){
-        mCallbacks = cb;
-    }
 }
