@@ -45,7 +45,6 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
         final PocketItem item = mData.get(position);
         vh.title.setText(Html.fromHtml(item.resolved_title));
         vh.excerpt.setText(item.excerpt);
-        vh.id.setText(item.item_id+"");
 
         final PocketImageItem imageItem = item.images == null ? null : (PocketImageItem) item.images.values().toArray()[0];
         final String imageUrl = imageItem == null ? "" : imageItem.src;
@@ -64,15 +63,13 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
     }
 
     private static class ViewHolder {
-        public final TextView title, excerpt, id;
+        public final TextView title, excerpt;
         public final ImageView image;
 
         public ViewHolder(View view){
             title = (TextView) view.findViewById(R.id.article_title);
             excerpt = (TextView) view.findViewById(R.id.article_excerpt);
-            id = (TextView) view.findViewById(R.id.article_id);
             image = (ImageView) view.findViewById(R.id.home_screen_image);
-            Log.d(LOG_TAG, String.format("title=%s\nexcerpt=%s\nid=%s\n",title,excerpt,id));
         }
     }
 
