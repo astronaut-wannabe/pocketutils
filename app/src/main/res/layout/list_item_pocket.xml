@@ -39,7 +39,7 @@
             android:layout_gravity="bottom"
             android:paddingRight="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingTop="@dimen/default_gap"
+            android:paddingTop="@dimen/activity_vertical_margin"
             android:textSize="30sp"
             android:typeface="sans"
             android:textColor="@android:color/white"
