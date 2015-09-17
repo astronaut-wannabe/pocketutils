@@ -2,6 +2,7 @@ package com.astronaut_wannabe.pocketutil;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -39,6 +40,12 @@ public class SwipeActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mToken = getAccessToken();
+
+        if (mToken == null) {
+            startActivity(new Intent(this, AuthActivity.class));
+        }
+
         setContentView(R.layout.activity_signin);
         mFlingContainer = (SwipeFlingAdapterView) findViewById(R.id.swipe_container);
 
@@ -49,7 +56,6 @@ public class SwipeActivity extends ActionBarActivity {
         mSwitcher.setInAnimation(in);
 
         mPocketClient = getPocketClient();
-        mToken = getAccessToken();
 
         final Call<PocketResponse> call = mPocketClient.get(createFetchRequest(1000));
         final Activity activity = this;
