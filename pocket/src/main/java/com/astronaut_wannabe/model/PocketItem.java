@@ -17,6 +17,6 @@ public class PocketItem {
     public int has_video;
     public int has_image;
     public int word_count;
-    public HashMap<Integer, PocketImageItem> images;
+    public HashMap<Integer, Image> images;
     public HashMap<Integer, PocketVideoItem> videos;
 }

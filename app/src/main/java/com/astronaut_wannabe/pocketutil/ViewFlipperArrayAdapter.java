@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.astronaut_wannabe.model.PocketImageItem;
+import com.astronaut_wannabe.model.Image;
 import com.astronaut_wannabe.model.PocketItem;
 import com.bumptech.glide.Glide;
 
@@ -46,7 +46,7 @@ public class ViewFlipperArrayAdapter extends ArrayAdapter<PocketItem> {
         vh.title.setText(Html.fromHtml(item.resolved_title));
         vh.excerpt.setText(item.excerpt);
 
-        final PocketImageItem imageItem = item.images == null ? null : (PocketImageItem) item.images.values().toArray()[0];
+        final Image imageItem = item.images == null ? null : (Image) item.images.values().toArray()[0];
         final String imageUrl = imageItem == null ? "" : imageItem.src;
         if(imageUrl.equals(""))
             Log.d(LOG_TAG, "no image for " + item.resolved_title);
