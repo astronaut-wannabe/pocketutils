@@ -45,6 +45,7 @@ public class PocketClient {
         public String access_token;
         public String consumer_key;
         public String count;
+        public String detailType;
     }
 
     public static class PostRequest {

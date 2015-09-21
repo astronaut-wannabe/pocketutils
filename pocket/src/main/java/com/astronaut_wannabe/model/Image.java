@@ -2,8 +2,14 @@
 package com.astronaut_wannabe.model;
 
 public class Image {
-    public String item_id;
+    public int item_id;
+    public int image_id;
+
     public String src;
-    public String width;
-    public String height;
+
+    public int width;
+    public int height;
+
+    public String credit;
+    public String caption;
 }

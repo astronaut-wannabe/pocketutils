@@ -99,6 +99,7 @@ public class SwipeActivity extends AppCompatActivity {
         final PocketClient.GetRequest req = new PocketClient.GetRequest();
         req.access_token = mToken;
         req.consumer_key = CONSUMER_KEY;
+        req.detailType = "complete";
         req.count = Integer.toString(numItems);
         return req;
     }
