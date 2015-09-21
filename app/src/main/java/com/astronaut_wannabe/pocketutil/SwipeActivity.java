@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ViewSwitcher;
 
 import com.astronaut_wannabe.PocketClient;
@@ -28,7 +26,7 @@ import retrofit.Retrofit;
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 
 
-public class SwipeActivity extends ActionBarActivity {
+public class SwipeActivity extends AppCompatActivity {
     private static final String LOG_TAG = SwipeActivity.class.getSimpleName();
 
     private SwipeFlingAdapterView mFlingContainer;
@@ -50,10 +48,6 @@ public class SwipeActivity extends ActionBarActivity {
         mFlingContainer = (SwipeFlingAdapterView) findViewById(R.id.swipe_container);
 
         mSwitcher = (ViewSwitcher) findViewById(R.id.viewSwitcher);
-        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.fade_out);
-        Animation in = AnimationUtils.loadAnimation(this,android.R.anim.fade_in);
-        mSwitcher.setOutAnimation(out);
-        mSwitcher.setInAnimation(in);
 
         mPocketClient = getPocketClient();
 
