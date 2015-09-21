@@ -15,8 +15,6 @@
     <string name="pocket_access_key" translatable="false">PocketAccessKey</string>
     <string name="pocket_authorized" translatable="false">PocketAuthorized</string>
     <string name="pocket_since_date" translatable="false">PocketSinceDate</string>
-    <string name="content_authority" translatable="false">com.astronaut_wannabe.pocketutil</string>
-    <string name="sync_account_type" translatable="false">pocketutil.astronaut_wannabe.com</string>
     <string name="sign_in_btn">Sign in to Pocket</string>
     <string name="content_desc_placeholder_image">Placeholder Image</string>
 </resources>

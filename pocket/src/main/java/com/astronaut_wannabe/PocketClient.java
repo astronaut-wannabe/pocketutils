@@ -17,7 +17,7 @@ public class PocketClient {
     public static final String API_URL = "https://getpocket.com";
     public static final String CONSUMER_KEY = "***REMOVED***";
 
-    public static Interceptor sRequestInterceptor = new Interceptor() {
+    public static final Interceptor sRequestInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             final Request original_request = chain.request();
@@ -55,15 +55,15 @@ public class PocketClient {
 
     public interface Pocket {
         @POST("/v3/oauth/request")
-        public Call<TokenResponse> obtainRequestToken(@Body TokenRequest request);
+        Call<TokenResponse> obtainRequestToken(@Body TokenRequest request);
 
         @POST("/v3/oauth/authorize")
-        public Call<TokenResponse> authorizeToken(@Body TokenRequest request);
+        Call<TokenResponse> authorizeToken(@Body TokenRequest request);
 
         @POST("/v3/get")
-        public Call<PocketResponse> get(@Body GetRequest request);
+        Call<PocketResponse> get(@Body GetRequest request);
 
         @POST("/v3/send")
-        public Call<PocketSendResponse> send(@Body PostRequest req);
+        Call<PocketSendResponse> send(@Body PostRequest req);
     }
 }

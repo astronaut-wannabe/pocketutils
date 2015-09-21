@@ -1,5 +1,6 @@
 package com.astronaut_wannabe.pocketutil;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +18,6 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 import static com.astronaut_wannabe.PocketClient.Pocket;
 
 public class AuthActivity extends FragmentActivity {
@@ -31,12 +31,9 @@ public class AuthActivity extends FragmentActivity {
             final String prefKey = getString (R.string.pocket_access_key);
             final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
             prefs.getString(prefKey, null);
-            authorizeToken(CONSUMER_KEY, prefs.getString(prefKey, null));
+            authorizeToken(prefs.getString(prefKey, null));
         } else {
             setContentView(R.layout.activity_auth);
-            final String prefKey = getString (R.string.pocket_access_key);
-            final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-            final String token = prefs.getString(prefKey, null);
         }
     }
 
@@ -78,7 +75,7 @@ public class AuthActivity extends FragmentActivity {
         call.enqueue(cb);
     }
 
-    public void launchBrowser(String code, String url) {
+    private void launchBrowser(String code, String url) {
         final Uri builtUri = Uri.parse("https://getpocket.com/auth/authorize").buildUpon()
                 .appendQueryParameter("request_token", code)
                 .appendQueryParameter("mobile", "1")
@@ -89,10 +86,10 @@ public class AuthActivity extends FragmentActivity {
         startActivity(intent);
     }
 
-    public void authorizeToken(String key, String code) {
+    private void authorizeToken(String code) {
         final PocketClient.TokenRequest req = new PocketClient.TokenRequest();
         req.code = code;
-        req.consumer_key = key;
+        req.consumer_key = PocketClient.CONSUMER_KEY;
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(PocketClient.API_URL)
@@ -104,7 +101,7 @@ public class AuthActivity extends FragmentActivity {
         final Pocket pocket = retrofit.create(Pocket.class);
 
         Call<PocketClient.TokenResponse> call = pocket.authorizeToken(req);
-
+        final Activity activity = this;
         final Callback<PocketClient.TokenResponse> cb = new Callback<PocketClient.TokenResponse>() {
 
             @Override
@@ -115,6 +112,7 @@ public class AuthActivity extends FragmentActivity {
                 final SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(prefKey, token);
                 editor.commit();
+                startActivity(new Intent(activity, SwipeActivity.class));
 
                 makeToast(response.body().username, response);
             }
@@ -127,7 +125,7 @@ public class AuthActivity extends FragmentActivity {
         call.enqueue(cb);
     }
 
-    public void makeToast(String s, Response r){
+    private void makeToast(String s, Response r){
         Toast.makeText(this, s, Toast.LENGTH_LONG).show();
     }
 }

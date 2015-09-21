@@ -20,11 +20,11 @@ import retrofit.Response;
 import static com.astronaut_wannabe.PocketClient.CONSUMER_KEY;
 
 public class SwipeFlingListener implements SwipeFlingAdapterView.onFlingListener {
-    final ArrayList<PocketItem> mData;
-    final ArrayAdapter mAdapter;
-    final Activity mContext;
+    private final ArrayList<PocketItem> mData;
+    private final ArrayAdapter mAdapter;
+    private final Activity mContext;
     private final PocketClient.Pocket mClient;
-    private String mToken;
+    private final String mToken;
 
 
     public SwipeFlingListener(ArrayList<PocketItem> data, ArrayAdapter adapter, Activity context, PocketClient.Pocket c) {
