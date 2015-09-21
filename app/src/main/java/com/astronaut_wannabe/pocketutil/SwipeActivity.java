@@ -42,6 +42,8 @@ public class SwipeActivity extends AppCompatActivity {
 
         if (mToken == null) {
             startActivity(new Intent(this, AuthActivity.class));
+            finish();
+            return;
         }
 
         setContentView(R.layout.activity_signin);
