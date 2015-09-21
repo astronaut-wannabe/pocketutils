@@ -70,7 +70,7 @@ public class SwipeActivity extends AppCompatActivity {
                 
                 @Override
                 public void onFailure(Throwable t) {
-                    Log.e(LOG_TAG, t.getMessage().toString());
+                    Log.e(LOG_TAG, t.getMessage());
                 }
             };
         call.enqueue(cb);
