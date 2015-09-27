@@ -1,32 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".SwipeActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="10dp"
     android:elevation="4dp"
+    android:orientation="vertical"
     android:background="@drawable/my_rect">
-    <TextView
-        android:id="@+id/article_excerpt"
-        android:bufferType="spannable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="20sp"
-        android:padding="10dp"/>
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/article_excerpt"
-        android:layout_alignParentTop="true">
+        android:layout_height="fill_parent">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -53,4 +40,12 @@
             android:background="@color/image_overlay_background"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
     </FrameLayout>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/article_excerpt"
+        android:bufferType="spannable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:textSize="20sp"
+        android:padding="10dp"/>
+</LinearLayout>

@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         app:rotation_degrees="16"
         app:max_visible="2"
-        app:min_adapter_stack="2" />
+        app:min_adapter_stack="5" />
     
   </ViewSwitcher>
 </FrameLayout>
