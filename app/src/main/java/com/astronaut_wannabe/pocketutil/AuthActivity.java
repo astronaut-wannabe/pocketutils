@@ -26,7 +26,7 @@ public class AuthActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final boolean isApproved = "***REMOVED***".equalsIgnoreCase(getIntent().getDataString());
+        final boolean isApproved = "pocketapp41140:authdone".equalsIgnoreCase(getIntent().getDataString());
         if(isApproved) {
             final String prefKey = getString (R.string.pocket_access_key);
             final SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
