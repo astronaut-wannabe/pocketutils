@@ -25,11 +25,4 @@ To see all available Gradle tasks go to the project's root directory and run:
 ./gradlew tasks
 ```
 
-### Who do I talk to? ###
-
-* Leave an [issue][1] if you run into a bug
-* <contact@astronaut-wannabe.com> for general feedback
-
-
 [0]:https://getpocket.com/about
-[1]:https://bitbucket.org/AnotherParanoidAndroid/pocketutils/issues?status=new&status=open
