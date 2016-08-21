@@ -15,7 +15,7 @@ import retrofit.http.POST;
 
 public class PocketClient {
     public static final String API_URL = "https://getpocket.com";
-    public static final String CONSUMER_KEY = "***REMOVED***";
+    public static final String CONSUMER_KEY = // key here
 
     public static final Interceptor sRequestInterceptor = new Interceptor() {
         @Override
