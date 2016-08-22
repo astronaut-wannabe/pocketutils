@@ -13,7 +13,7 @@ To build the app, you should just be able to clone and run the Gradle build comm
 If you have and Android device connected you should be able to follow these steps:
 
 ```bash
-git clone https://AnotherParanoidAndroid@bitbucket.org/AnotherParanoidAndroid/pocketutils.git
+git clone https://github.com/astronaut-wannabe/pocketutils.git
 cd pocketutils
 ./gradlew installDebug
 ```
