@@ -1,4 +1,10 @@
 # README #
+## What
+This app pulls a bunch of articles from your [Pocket][0] queue and then shuffles them. 
+- *Swipe Left*: deletes the article from your queue
+- *Swipe Right*: moves the article to the top of your queue
+
+## Build
 
 To build the app, you should just be able to clone and run the Gradle build commands.
 
