@@ -9,16 +9,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
-
 import com.astronaut_wannabe.PocketClient;
-
 import retrofit.Call;
 import retrofit.Callback;
-import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
-
-import static com.astronaut_wannabe.PocketClient.Pocket;
+import retrofit.GsonConverterFactory;
+import com.astronaut_wannabe.PocketClient.Pocket;
 
 public class AuthActivity extends FragmentActivity {
 
@@ -81,8 +78,7 @@ public class AuthActivity extends FragmentActivity {
                 .appendQueryParameter("mobile", "1")
                 .appendQueryParameter("redirect_uri", url)
                 .build();
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(builtUri);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, builtUri);
         startActivity(intent);
     }
 
