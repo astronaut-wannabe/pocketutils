@@ -27,7 +27,8 @@ android {
 
 dependencies {
     // Swipe Library dependency
-    compile 'com.lorentzos.swipecards:library:1.0.8@aar'
+    compile 'com.lorentzos.swipecards:library:1.0.9@aar'
+
     // Material Design dependencies
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:design:27.0.2'
